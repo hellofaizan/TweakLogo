@@ -54,7 +54,7 @@ export function LogoPreview({
       <Tooltip>
         <TooltipTrigger>
           <div
-            className={`relative flex items-center justify-center border-dashed border-2 overflow-hidden`}
+            className={`relative flex items-center justify-center border-dashed border-2 overflow-hidden hover:bg-muted hover:border-primary`}
             style={{
               width: CANVAS_SIZE,
               height: CANVAS_SIZE,
@@ -94,7 +94,7 @@ export function LogoPreview({
             </div>
           </div>
         </TooltipTrigger>
-        <TooltipContent className="px-3 py-1 rounded-md bg-accent">
+        <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
           <p className="text-xs">Downloadable zone</p>
         </TooltipContent>
       </Tooltip>

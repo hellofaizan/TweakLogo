@@ -1,10 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark, business;
+  themes: light, dark, corporate;
 }
-
-@custom-variant dark (&:where([data-theme=night], [data-theme=night] *));
 
 :root {
   --background: hsl(0 0% 98.8235%);
@@ -13,7 +11,7 @@
   --card-foreground: hsl(0 0% 9.0196%);
   --popover: hsl(0 0% 98.8235%);
   --popover-foreground: hsl(0 0% 32.1569%);
-  --primary: hsl(151.2676 61.7391% 54.902%);
+  --primary: hsl(135, 100%, 39%);
   --primary-foreground: hsl(152.7273 13.253% 16.2745%);
   --secondary: hsl(0 0% 99.2157%);
   --secondary-foreground: hsl(0 0% 9.0196%);
@@ -183,4 +181,57 @@ body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
+}
+
+/* Custom styles for the gradient color picker */
+.custom-gradient-picker {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+.custom-gradient-picker .rbgcp-picker {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+.custom-gradient-picker input[type="range"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  accent-color: #2563eb;
+}
+.custom-gradient-picker input[type="range"]::-webkit-slider-thumb {
+  background: #2563eb;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  width: 18px;
+  height: 18px;
+  box-shadow: 0 0 2px #0003;
+}
+.custom-gradient-picker input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: linear-gradient(90deg, #fff, #2563eb);
+  border-radius: 3px;
+}
+.custom-gradient-picker input[type="range"]::-moz-range-thumb {
+  background: #2563eb;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  width: 18px;
+  height: 18px;
+}
+.custom-gradient-picker input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: linear-gradient(90deg, #fff, #2563eb);
+  border-radius: 3px;
+}
+.custom-gradient-picker input[type="range"]::-ms-thumb {
+  background: #2563eb;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  width: 18px;
+  height: 18px;
+}
+.custom-gradient-picker input[type="range"]::-ms-fill-lower,
+.custom-gradient-picker input[type="range"]::-ms-fill-upper {
+  background: linear-gradient(90deg, #fff, #2563eb);
+  border-radius: 3px;
 }

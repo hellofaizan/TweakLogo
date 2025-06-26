@@ -2,7 +2,7 @@
 
 import * as LucideIconsImport from "lucide-react";
 import React, { useMemo, useState, useRef } from "react";
-import ColorPicker from "react-best-gradient-color-picker";
+import dynamic from "next/dynamic";
 import iconNodesJson from "lucide-static/icon-nodes.json";
 import {
   Sheet,
@@ -10,6 +10,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
+  SheetFooter,
+  SheetDescription,
 } from "@/components/ui/sheet";
 import {
   Tooltip,
@@ -32,6 +34,13 @@ const LucideIcons = LucideIconsImport as unknown as Record<
 // Get all Lucide icon names from lucide-static
 const ALL_ICON_NAMES = Object.keys(iconNodesJson);
 const iconNodes = iconNodesJson as Record<string, any>;
+
+// Presets for solid colors
+const solidPresets = [
+  "#080166", "#0974f1", "#f3f520", "#59d102", "#f40752", "#f74c06", "#c11e38", "#f83d5c", "#b94c98", "#7f0012", "#f97d5b", "#020344", "#0968e5", "#FF7554", "#AF33F2", "#F2B705"
+];
+
+const ColorPicker = dynamic(() => import("react-best-gradient-color-picker"), { ssr: false });
 
 function renderLucideSvg(
   iconNode: any,
@@ -57,6 +66,11 @@ function renderLucideSvg(
       )}
     </svg>
   );
+}
+
+// Helper to convert a string to PascalCase
+function toPascalCase(str: string) {
+  return str.replace(/(^|_|-)(\w)/g, (_, __, c) => c ? c.toUpperCase() : '');
 }
 
 export function IconControls({
@@ -92,7 +106,7 @@ export function IconControls({
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [visibleCount, setVisibleCount] = useState(60); // Show 60 icons initially
+  const [visibleCount, setVisibleCount] = useState(0); 
   const gridRef = useRef<HTMLDivElement>(null);
   const [fillOpen, setFillOpen] = useState(false);
   const [borderOpen, setBorderOpen] = useState(true);
@@ -108,7 +122,7 @@ export function IconControls({
 
   // Reset visibleCount when search changes
   React.useEffect(() => {
-    setVisibleCount(60);
+    setVisibleCount(100);
   }, [search]);
 
   // Handler to load more icons on scroll
@@ -119,7 +133,12 @@ export function IconControls({
     }
   };
 
+  // Always use the exact key from iconNodesJson and LucideIcons
   const Icon = LucideIcons[iconName];
+  // Debug log
+  if (!Icon) {
+    console.warn('Icon not found:', iconName, 'Available:', Object.keys(LucideIcons));
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -128,7 +147,7 @@ export function IconControls({
           className="p-2 border rounded"
           onClick={() => setSheetOpen(true)}
         >
-          <Icon size={32} />
+          {Icon ? <Icon size={32} /> : <span className="text-xs text-red-500">Icon not found</span>}
         </button>
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
@@ -142,6 +161,9 @@ export function IconControls({
           <SheetContent side="left" className="p-5">
             <SheetHeader>
               <SheetTitle>Select an Icon</SheetTitle>
+              <SheetDescription>
+                Browse and select an icon from the list below.
+              </SheetDescription>
             </SheetHeader>
             <input
               type="text"
@@ -152,33 +174,27 @@ export function IconControls({
             />
             <TooltipProvider>
               <div
-                className="grid grid-cols-5 gap-4 overflow-y-auto"
+                className="grid grid-cols-5 gap-4 overflow-y-auto p-0.5"
                 ref={gridRef}
                 onScroll={handleScroll}
               >
-                {iconEntries.slice(0, visibleCount).map((name:string) => (
+                {iconEntries.slice(0, visibleCount).map((name) => (
                   <Tooltip key={name}>
                     <TooltipTrigger>
                       <div
                         className={`flex flex-col items-center p-2 border rounded cursor-pointer ${
-                          iconName.toLowerCase() === name.toLowerCase()
-                            ? "ring-2 ring-primary"
-                            : ""
+                          iconName === name ? "ring-2 ring-primary" : ""
                         }`}
                         onClick={() => {
-                          setIconName(
-                            name.charAt(0).toUpperCase() + name.slice(1)
-                          );
+                          setIconName(toPascalCase(name));
                           setSheetOpen(false);
                         }}
                         tabIndex={0}
                         role="button"
                         aria-label={name}
-                        onKeyDown={e => {
+                        onKeyDown={(e) => {
                           if (e.key === "Enter" || e.key === " ") {
-                            setIconName(
-                              name.charAt(0).toUpperCase() + name.slice(1)
-                            );
+                            setIconName(toPascalCase(name));
                             setSheetOpen(false);
                           }
                         }}
@@ -196,11 +212,24 @@ export function IconControls({
                 ))}
               </div>
             </TooltipProvider>
+            <SheetFooter>
+            {visibleCount < iconEntries.length && (
+                <button
+                  className="mt-4 px-4 py-2 bg-accent rounded w-full"
+                  onClick={() => setVisibleCount((prev) => Math.min(prev + 60, iconEntries.length))}
+                >
+                  Load More
+                </button>
+              )}
+            </SheetFooter>
           </SheetContent>
         </Sheet>
       </div>
       <div>
-        <label className="block text-xs mb-1">Size</label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs mb-1">Size</label>
+          <div className="text-right text-xs">{size} px</div>
+        </div>
         <input
           type="range"
           step={1}
@@ -208,24 +237,28 @@ export function IconControls({
           max={500}
           value={size}
           onChange={(e) => setSize(Number(e.target.value))}
-          className="w-full range range-lg"
+          className="w-full range range-lg range-primary"
         />
-        <div className="text-right text-xs">{size} px</div>
       </div>
       <div>
-        <label className="block text-xs mb-1">Rotate</label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs mb-1">Rotate</label>
+          <div className="text-right text-xs">{rotate}&deg;</div>
+        </div>
         <input
           type="range"
           min={-180}
           max={180}
           value={rotate}
           onChange={(e) => setRotate(Number(e.target.value))}
-          className="w-full range range-lg"
+          className="w-full range range-lg range-primary"
         />
-        <div className="text-right text-xs">{rotate}&deg;</div>
       </div>
       <div>
-        <label className="block text-xs mb-1">Border width</label>
+        <div className="flex items-center justify-between">
+          <label className="block text-xs mb-1">Border width</label>
+          <div className="text-right text-xs">{borderWidth} px</div>
+        </div>
         <input
           type="range"
           min={0}
@@ -233,50 +266,49 @@ export function IconControls({
           step={0.1}
           value={borderWidth}
           onChange={(e) => setBorderWidth(Number(e.target.value))}
-          className="w-full range range-lg"
+          className="w-full range range-lg range-primary"
         />
-        <div className="text-right text-xs">{borderWidth} px</div>
       </div>
       <Collapsible open={borderOpen} onOpenChange={setBorderOpen}>
         <CollapsibleTrigger asChild>
           <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors">
-            {borderOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
+            {borderOpen ? (
+              <ChevronDown size={18} />
+            ) : (
+              <ChevronRight size={18} />
+            )}
             Border Color
           </button>
         </CollapsibleTrigger>
         <CollapsibleContent className="space-y-4 mt-2">
-          <div className="w-full bg-[#202020] border border-border rounded-md shadow-sm overflow-hidden">
+          <div className="w-full border border-border rounded-md shadow-sm overflow-hidden relative">
             <ColorPicker
               value={color}
               onChange={setColor}
+              width={284}
               height={110}
               hideColorTypeBtns={true}
               hideInputType={true}
               hideAdvancedSliders={true}
               hideColorGuide={true}
-              presets={[
-                "rgba(255, 255, 255, 1)",
-                "rgba(0, 0, 0, 1)",
-                "rgba(255, 0, 0, 1)",
-                "rgba(0, 255, 0, 1)",
-                "rgba(0, 0, 255, 1)",
-                "rgba(255, 255, 255, 0.5)",
-                "rgba(0, 0, 0, 0.5)",
-                "rgba(255, 0, 0, 0.5)",
-                "rgba(0, 255, 0, 0.5)",
-                "rgba(0, 0, 255, 0.5)",
-                "rgba(255, 255, 255, 0.25)",
-                "rgba(0, 0, 0, 0.25)",
-                "rgba(255, 0, 0, 0.25)",
-                "rgba(0, 255, 0, 0.25)",
-                "rgba(0, 0, 255, 0.25)",
-              ]}
-              className="rounded-md p-2"
+              hidePresets={true}
+              className="rounded-md p-2 custom-gradient-picker"
             />
+            <div className="flex flex-wrap gap-2 mt-2 pb-3 justify-center">
+              {solidPresets.map((preset, idx) => (
+                <div
+                  key={idx}
+                  className="w-7 h-7 rounded cursor-pointer border border-border"
+                  style={{ background: preset }}
+                  onClick={() => setColor(preset)}
+                  title={preset}
+                />
+              ))}
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>
-      
+
       <Collapsible open={fillOpen} onOpenChange={setFillOpen}>
         <CollapsibleTrigger asChild>
           <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors">
@@ -287,7 +319,10 @@ export function IconControls({
         <CollapsibleContent className="space-y-4 mt-2">
           <div>
             <label className="block text-xs mb-1">
-              Fill opacity <span className="float-right">{Math.round(fillOpacity * 100)}%</span>
+              Fill opacity{" "}
+              <span className="float-right">
+                {Math.round(fillOpacity * 100)}%
+              </span>
             </label>
             <input
               type="range"
@@ -295,15 +330,16 @@ export function IconControls({
               max={1}
               step={0.01}
               value={fillOpacity}
-              onChange={e => setFillOpacity(Number(e.target.value))}
-              className="w-full"
+              onChange={(e) => setFillOpacity(Number(e.target.value))}
+              className="w-full range range-lg range-primary"
             />
           </div>
-          <div className="bg-[#202020] border border-border rounded-md shadow-sm">
+          <div className="border border-border rounded-md shadow-sm relative">
             <ColorPicker
               value={fillColor}
               onChange={setFillColor}
               height={110}
+              width={284}
               hideColorTypeBtns={true}
               hideInputs={true}
               hideOpacity={false}
@@ -311,8 +347,20 @@ export function IconControls({
               hideAdvancedSliders={true}
               hideColorGuide={true}
               hideInputType={true}
-              className="rounded-md p-2"
+              hidePresets={true}
+              className="rounded-md p-2 custom-gradient-picker"
             />
+            <div className="flex flex-wrap gap-2 mt-2 pb-3 justify-center">
+              {solidPresets.map((preset, idx) => (
+                <div
+                  key={idx}
+                  className="w-7 h-7 rounded cursor-pointer border border-border"
+                  style={{ background: preset }}
+                  onClick={() => setFillColor(preset)}
+                  title={preset}
+                />
+              ))}
+            </div>
           </div>
         </CollapsibleContent>
       </Collapsible>

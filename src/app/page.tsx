@@ -11,22 +11,22 @@ const LucideIcons = LucideIconsImport as unknown as Record<
   string,
   React.ComponentType<any>
 >;
-const DEFAULT_ICON = "PenTool";
+const DEFAULT_ICON = "Aperture";
 
 export default function Home() {
   // Icon state
   const [iconName, setIconName] = useState(DEFAULT_ICON);
-  const [iconSize, setIconSize] = useState(256);
+  const [iconSize, setIconSize] = useState(300);
   const [iconRotate, setIconRotate] = useState(0);
   const [iconBorderWidth, setIconBorderWidth] = useState(2);
-  const [iconColor, setIconColor] = useState("#fd7200");
+  const [iconColor, setIconColor] = useState("#fff");
   const [fillColor, setFillColor] = useState("#ffffff");
   const [fillOpacity, setFillOpacity] = useState(0);
   // Background state
   const [bgRounded, setBgRounded] = useState(24);
-  const [bgPadding, setBgPadding] = useState(0);
+  const [bgPadding, setBgPadding] = useState(10);
   const [bgShadow, setBgShadow] = useState(2); // 0: NONE, 1: SM, 2: MD, 3: LG, 4: XL, 5: 2XL
-  const [bgColor, setBgColor] = useState("#ffffff");
+  const [bgColor, setBgColor] = useState("linear-gradient(45deg,rgba(8, 1, 102, 1) 0%, rgba(9, 9, 121, 1) 42%, rgba(0, 94, 255, 1) 100%)");
   // Tab state
   const [tab, setTab] = useState<"logo" | "background">("logo");
 
@@ -58,7 +58,7 @@ export default function Home() {
             <div className="flex items-start justify-between">
               <div className="flex gap-2 mb-4 items-center">
                 <button
-                  className={`px-4 py-1 rounded-t font-semibold border-b-1 transition-colors h-full ${
+                  className={`px-4 py-1 rounded-t font-semibold border-primary border-b-2 transition-colors h-full ${
                     tab === "logo" ? "border-primary" : "border-transparent"
                   }`}
                   onClick={() => setTab("logo")}
@@ -66,7 +66,7 @@ export default function Home() {
                   Logo
                 </button>
                 <button
-                  className={`px-4 py-1 rounded-t font-semibold border-b-1 transition-colors ${
+                  className={`px-4 py-1 rounded-t font-semibold border-b-2 transition-colors ${
                     tab === "background"
                       ? "border-primary"
                       : "border-transparent"
