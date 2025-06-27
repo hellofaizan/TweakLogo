@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -7,19 +7,7 @@ import {
 } from "./ui/tooltip";
 
 // Accept props for icon, size, color, border, rotation, and background
-export function LogoPreview({
-  Icon = undefined, // React component for the icon
-  size = 256,
-  color = "#fd7200",
-  borderWidth = 8,
-  rotate = 0,
-  bgRounded = 24,
-  bgPadding = 0,
-  bgShadow = 2,
-  bgColor = "#ffffff",
-  fillColor = "#ffffff",
-  fillOpacity = 1,
-}: {
+export const LogoPreview = forwardRef<HTMLDivElement, {
   Icon?: React.ComponentType<any>;
   size?: number;
   color?: string;
@@ -31,7 +19,19 @@ export function LogoPreview({
   bgColor?: string;
   fillColor?: string;
   fillOpacity?: number;
-}) {
+}>(({
+  Icon = undefined, // React component for the icon
+  size = 256,
+  color = "#fd7200",
+  borderWidth = 8,
+  rotate = 0,
+  bgRounded = 24,
+  bgPadding = 0,
+  bgShadow = 2,
+  bgColor = "#ffffff",
+  fillColor = "#ffffff",
+  fillOpacity = 1,
+}, ref) => {
   const [hovered, setHovered] = useState(false);
 
   // Tailwind shadow classes
@@ -68,6 +68,7 @@ export function LogoPreview({
           >
             {/* Background layer */}
             <div
+              ref={ref}
               className={`flex items-center justify-center ${shadowClass}`}
               style={{
                 width: bgSize,
@@ -100,4 +101,6 @@ export function LogoPreview({
       </Tooltip>
     </TooltipProvider>
   );
-}
+});
+
+LogoPreview.displayName = "LogoPreview";
