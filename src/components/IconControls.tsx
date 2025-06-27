@@ -36,7 +36,10 @@ const LucideIcons = LucideIconsImport as unknown as Record<
   React.ComponentType<any>
 >;
 
-const TablerIcons = TablerIconsImport as unknown as Record<string, React.ComponentType<any>>;
+const TablerIcons = TablerIconsImport as unknown as Record<
+  string,
+  React.ComponentType<any>
+>;
 
 // Get all Lucide icon names from lucide-static
 const ALL_ICON_NAMES = Object.keys(iconNodesJson);
@@ -44,10 +47,27 @@ const iconNodes = iconNodesJson as Record<string, any>;
 
 // Presets for solid colors
 const solidPresets = [
-  "#080166", "#0974f1", "#f3f520", "#59d102", "#f40752", "#f74c06", "#c11e38", "#f83d5c", "#b94c98", "#7f0012", "#f97d5b", "#020344", "#0968e5", "#FF7554", "#AF33F2", "#F2B705"
+  "#080166",
+  "#0974f1",
+  "#f3f520",
+  "#59d102",
+  "#f40752",
+  "#f74c06",
+  "#c11e38",
+  "#f83d5c",
+  "#b94c98",
+  "#7f0012",
+  "#f97d5b",
+  "#020344",
+  "#0968e5",
+  "#FF7554",
+  "#AF33F2",
+  "#F2B705",
 ];
 
-const ColorPicker = dynamic(() => import("react-best-gradient-color-picker"), { ssr: false });
+const ColorPicker = dynamic(() => import("react-best-gradient-color-picker"), {
+  ssr: false,
+});
 
 function renderLucideSvg(
   iconNode: any,
@@ -77,7 +97,7 @@ function renderLucideSvg(
 
 // Helper to convert a string to PascalCase
 function toPascalCase(str: string) {
-  return str.replace(/(^|_|-)(\w)/g, (_, __, c) => c ? c.toUpperCase() : '');
+  return str.replace(/(^|_|-)(\w)/g, (_, __, c) => (c ? c.toUpperCase() : ""));
 }
 
 export function IconControls({
@@ -100,8 +120,8 @@ export function IconControls({
 }: {
   iconName: string;
   setIconName: (name: string) => void;
-  iconLibrary: 'lucide' | 'tabler';
-  setIconLibrary: (lib: 'lucide' | 'tabler') => void;
+  iconLibrary: "lucide" | "tabler";
+  setIconLibrary: (lib: "lucide" | "tabler") => void;
   size: number;
   setSize: (size: number) => void;
   rotate: number;
@@ -117,7 +137,7 @@ export function IconControls({
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [visibleCount, setVisibleCount] = useState(0); 
+  const [visibleCount, setVisibleCount] = useState(0);
   const gridRef = useRef<HTMLDivElement>(null);
   const [fillOpen, setFillOpen] = useState(false);
   const [borderOpen, setBorderOpen] = useState(true);
@@ -137,7 +157,7 @@ export function IconControls({
   const tablerIconEntries = useMemo(
     () =>
       Object.keys(TablerIcons)
-        .filter((name) => !name.includes('Filled'))
+        .filter((name) => !name.includes("Filled"))
         .filter((name) => name.toLowerCase().includes(search.toLowerCase())),
     [search]
   );
@@ -158,9 +178,14 @@ export function IconControls({
   // Always use the exact key from iconNodesJson and LucideIcons
   const LucideIcon = LucideIcons[iconName];
   const TablerIcon = TablerIcons[iconName];
-  const Icon = iconTab === 'lucide' ? LucideIcon : TablerIcon;
+  const Icon = iconTab === "lucide" ? LucideIcon : TablerIcon;
   if (!Icon) {
-    console.warn('Icon not found:', iconName, 'Available:', iconTab === 'lucide' ? Object.keys(LucideIcons) : Object.keys(TablerIcons));
+    console.warn(
+      "Icon not found:",
+      iconName,
+      "Available:",
+      iconTab === "lucide" ? Object.keys(LucideIcons) : Object.keys(TablerIcons)
+    );
   }
 
   return (
@@ -170,7 +195,11 @@ export function IconControls({
           className="p-2 border rounded hover:bg-muted cursor-pointer"
           onClick={() => setSheetOpen(true)}
         >
-          {Icon ? <Icon size={32} /> : <span className="text-xs text-red-500">Icon not found</span>}
+          {Icon ? (
+            <Icon size={32} />
+          ) : (
+            <span className="text-xs text-red-500">Icon not found</span>
+          )}
         </button>
         <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
           <SheetTrigger asChild>
@@ -199,19 +228,23 @@ export function IconControls({
             {/* Tabs for icon libraries */}
             <div className="flex gap-2">
               <button
-                className={`px-3 py-1 rounded border cursor-pointer ${iconTab === 'lucide' ? 'bg-primary text-white' : 'bg-muted'}`}
+                className={`px-3 py-1 rounded border cursor-pointer ${
+                  iconTab === "lucide" ? "bg-primary text-white" : "bg-muted"
+                }`}
                 onClick={() => {
-                  setIconTab('lucide')
-                  setIconName(DEFAULT_ICON_LUCIDE)
+                  setIconTab("lucide");
+                  setIconName(DEFAULT_ICON_LUCIDE);
                 }}
               >
                 Lucide
               </button>
               <button
-                className={`px-3 py-1 rounded border cursor-pointer ${iconTab === 'tabler' ? 'bg-primary text-white' : 'bg-muted'}`}
+                className={`px-3 py-1 rounded border cursor-pointer ${
+                  iconTab === "tabler" ? "bg-primary text-white" : "bg-muted"
+                }`}
                 onClick={() => {
-                  setIconTab('tabler')
-                  setIconName(DEFAULT_ICON_TABLER)
+                  setIconTab("tabler");
+                  setIconName(DEFAULT_ICON_TABLER);
                 }}
               >
                 Tabler
@@ -223,14 +256,16 @@ export function IconControls({
                 ref={gridRef}
                 onScroll={handleScroll}
               >
-                {(iconTab === 'lucide' ? lucideIconEntries : tablerIconEntries)
+                {(iconTab === "lucide" ? lucideIconEntries : tablerIconEntries)
                   .slice(0, visibleCount)
                   .map((name) => (
                     <Tooltip key={name}>
                       <TooltipTrigger>
                         <div
                           className={`flex flex-col items-center p-2 border rounded cursor-pointer ${
-                            iconName === toPascalCase(name) ? "ring-2 ring-primary" : ""
+                            iconName === toPascalCase(name)
+                              ? "ring-2 ring-primary"
+                              : ""
                           }`}
                           onClick={() => {
                             setIconName(toPascalCase(name));
@@ -242,18 +277,31 @@ export function IconControls({
                           aria-label={name}
                           onKeyDown={(e) => {
                             if (e.key === "Enter" || e.key === " ") {
-                              setIconName(iconTab === 'tabler' ? 'Icon' + toPascalCase(name) : toPascalCase(name));
+                              setIconName(
+                                iconTab === "tabler"
+                                  ? "Icon" + toPascalCase(name)
+                                  : toPascalCase(name)
+                              );
                               setIconLibrary(iconTab);
                               setSheetOpen(false);
                             }
                           }}
                         >
-                          {iconTab === 'lucide'
-                            ? renderLucideSvg((iconNodes as Record<string, any>)[name], 32)
-                            : TablerIcons[toPascalCase(name)]
-                              ? React.createElement(TablerIcons[toPascalCase(name)], { size: 32 })
-                              : <span className="text-xs text-red-500">Icon not found</span>
-                          }
+                          {iconTab === "lucide" ? (
+                            renderLucideSvg(
+                              (iconNodes as Record<string, any>)[name],
+                              32
+                            )
+                          ) : TablerIcons[toPascalCase(name)] ? (
+                            React.createElement(
+                              TablerIcons[toPascalCase(name)],
+                              { size: 32 }
+                            )
+                          ) : (
+                            <span className="text-xs text-red-500">
+                              Icon not found
+                            </span>
+                          )}
                         </div>
                       </TooltipTrigger>
                       <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
@@ -264,12 +312,21 @@ export function IconControls({
               </div>
             </TooltipProvider>
             <SheetFooter>
-            {(iconTab === 'lucide'
-              ? visibleCount < lucideIconEntries.length
-              : visibleCount < tablerIconEntries.length) && (
+              {(iconTab === "lucide"
+                ? visibleCount < lucideIconEntries.length
+                : visibleCount < tablerIconEntries.length) && (
                 <button
                   className="mt-4 px-4 py-2 bg-accent rounded w-full"
-                  onClick={() => setVisibleCount((prev) => Math.min(prev + 60, iconTab === 'lucide' ? lucideIconEntries.length : tablerIconEntries.length))}
+                  onClick={() =>
+                    setVisibleCount((prev) =>
+                      Math.min(
+                        prev + 60,
+                        iconTab === "lucide"
+                          ? lucideIconEntries.length
+                          : tablerIconEntries.length
+                      )
+                    )
+                  }
                 >
                   Load More
                 </button>
@@ -324,7 +381,7 @@ export function IconControls({
       </div>
       <Collapsible open={borderOpen} onOpenChange={setBorderOpen}>
         <CollapsibleTrigger asChild>
-          <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors">
+          <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors cursor-pointer border-b ">
             {borderOpen ? (
               <ChevronDown size={18} />
             ) : (
@@ -364,7 +421,7 @@ export function IconControls({
 
       <Collapsible open={fillOpen} onOpenChange={setFillOpen}>
         <CollapsibleTrigger asChild>
-          <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors">
+          <button className="flex items-center gap-2 text-md font-medium hover:bg-accent p-2 rounded transition-colors cursor-pointer border-b">
             {fillOpen ? <ChevronDown size={18} /> : <ChevronRight size={18} />}
             Fill Settings
           </button>

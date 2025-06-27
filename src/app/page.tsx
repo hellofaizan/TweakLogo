@@ -9,7 +9,6 @@ import * as LucideIconsImport from "lucide-react";
 import * as TablerIconsImport from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toPng } from "html-to-image";
 import { Loader2 } from "lucide-react";
 import {
   Select,
@@ -159,6 +158,7 @@ export default function Home() {
               onClick={handleDownload}
               disabled={isDownloading}
               size={"xl"}
+              className="text-white"
             >
               {isDownloading ? (
                 <Loader2 className="animate-spin mr-2 h-4 w-4 inline" />
@@ -175,7 +175,7 @@ export default function Home() {
               <div className="flex gap-2 items-center">
                 <Tabs defaultValue="logo">
                   <div className="flex flex-row gap-2 items-center w-full justify-between">
-                    <TabsList className="cursor-pointer rounded-md border border-[#242424]">
+                    <TabsList className="cursor-pointer rounded-md border">
                       <TabsTrigger
                         value="logo"
                         className="rounded-md cursor-pointer"
