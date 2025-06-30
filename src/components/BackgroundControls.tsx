@@ -130,14 +130,14 @@ export function BackgroundControls({
       </div>
       <div>
         <label className="block text-xs mb-1">Background</label>
-        <div className="bg-background border border-border rounded-md shadow-sm w-full max-w-xs mx-auto">
+        <div className="bg-background border border-border rounded-md shadow-sm w-full">
           <ColorPicker
             value={bgColor}
             onChange={setBgColor}
             height={120}
-            width={284}
+            width={333}
             hidePresets={true}
-            className={`rounded-md p-2 w-full custom-gradient-picker`}
+            className={`rounded-md p-2 custom-gradient-picker`}
           />
           <div className="flex flex-wrap gap-2 mt-2 pb-3 justify-center">
             {(colorMode === "solid" ? solidPresets : gradientPresets).map((preset, idx) => (

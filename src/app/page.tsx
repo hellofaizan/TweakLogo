@@ -17,6 +17,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import Link from "next/link";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -112,21 +113,31 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
+    <main className="h-full">
       {/* SEO-optimized header section */}
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Free Online Logo Generator
           </h1>
-          <p className="text-xl md:text-2xl mb-6">
-            Create stunning logos online with LogoTweak - the fastest free logo maker
-          </p>
+          <div className="flex items-center gap-1 text-lg md:text-xl mb-6 justify-center">
+            Create stunning logos online with Logotweak
+            <img src="/logos/logo.png" alt="Logotweak" className="w-6 h-6" />
+            <span> the fastest free logo maker</span>
+          </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <span className="bg-white/20 px-3 py-1 rounded-full">✓ No registration required</span>
-            <span className="bg-white/20 px-3 py-1 rounded-full">✓ Thousands of icons</span>
-            <span className="bg-white/20 px-3 py-1 rounded-full">✓ Instant download</span>
-            <span className="bg-white/20 px-3 py-1 rounded-full">✓ Professional quality</span>
+            <span className="bg-white/20 px-3 py-1 rounded-full">
+              ✓ 7000+ free icons
+            </span>
+            <span className="bg-white/20 px-3 py-1 rounded-full">
+              ✓ No credit card
+            </span>
+            <span className="bg-white/20 px-3 py-1 rounded-full">
+              ✓ Instant download
+            </span>
+            <span className="bg-white/20 px-3 py-1 rounded-full">
+              ✓ Professional quality
+            </span>
           </div>
         </div>
       </header>
@@ -137,11 +148,6 @@ export default function Home() {
           <div className="w-full max-w-6xl mx-auto flex flex-col lg:flex-row gap-8">
             {/* Left: Live Preview */}
             <article className="flex-1 flex flex-col items-center justify-center">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-semibold mb-2">Live Logo Preview</h2>
-                <p className="text-muted-foreground">Design your logo in real-time</p>
-              </div>
-              
               <LogoPreview
                 ref={previewRef}
                 Icon={Icon}
@@ -156,7 +162,7 @@ export default function Home() {
                 fillColor={fillColor}
                 fillOpacity={fillOpacity}
               />
-              
+
               <div className="flex flex-col sm:flex-row items-center gap-4 mt-6 w-full max-w-md">
                 <Select value={resolution} onValueChange={setResolution}>
                   <SelectTrigger className="w-full sm:w-auto">
@@ -199,10 +205,10 @@ export default function Home() {
 
             {/* Right: Controls */}
             <aside className="w-full lg:w-[400px] flex flex-col gap-4">
-              <div className="rounded-xl shadow-lg p-6 bg-card border">
+              <div className="rounded-xl shadow-lg p-6 bg-card border w-full">
                 {/* Tabs */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex gap-2 items-center">
+                <div className="flex items-start justify-between mb-4 w-full">
+                  <div className="flex gap-2 items-center w-full">
                     <Tabs defaultValue="logo" className="w-full">
                       <div className="flex flex-row gap-2 items-center w-full justify-between">
                         <TabsList className="cursor-pointer rounded-md border">
@@ -225,7 +231,9 @@ export default function Home() {
                       </div>
                       <TabsContent value="logo">
                         <div>
-                          <h3 className="font-semibold mb-4 text-lg">Icon Settings</h3>
+                          <h3 className="font-semibold mb-4 text-lg">
+                            Icon Settings
+                          </h3>
                           <IconControls
                             iconName={iconName}
                             setIconName={setIconName}
@@ -273,45 +281,49 @@ export default function Home() {
       </section>
 
       {/* SEO-optimized features section */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Why Choose LogoTweak for Your Logo Design?
             </h2>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              The best free online logo generator with professional features and instant results
+              The best free online logo generator with professional features and
+              instant results
             </p>
           </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="text-center p-6 rounded-lg shadow-md border">
               <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Sparkles className="w-8 h-8 text-blue-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Free Logo Maker</h3>
               <p className="text-muted-foreground">
-                Create professional logos online completely free. No hidden costs, no registration required.
+                Create professional logos online completely free. No hidden
+                costs, no registration required.
               </p>
             </div>
-            
-            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+
+            <div className="text-center p-6 rounded-lg shadow-md border">
               <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Image className="w-8 h-8 text-purple-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Thousands of Icons</h3>
               <p className="text-muted-foreground">
-                Access thousands of beautiful icons from Lucide and Tabler libraries. Find the perfect icon for your brand.
+                Access thousands of beautiful icons from Lucide and Tabler
+                libraries. Find the perfect icon for your brand.
               </p>
             </div>
-            
-            <div className="text-center p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+
+            <div className="text-center p-6 rounded-lg shadow-md border">
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Download className="w-8 h-8 text-green-600" />
               </div>
               <h3 className="text-xl font-semibold mb-2">Instant Download</h3>
               <p className="text-muted-foreground">
-                Download your logo in PNG, JPG, or SVG format. High-resolution files ready for print and web use.
+                Download your logo in PNG, JPG, or SVG format. High-resolution
+                files ready for print and web use.
               </p>
             </div>
           </div>
@@ -324,12 +336,35 @@ export default function Home() {
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Ready to Create Your Logo?
           </h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Join thousands of users who trust LogoTweak for their logo design needs. 
-            Start creating your professional logo today!
+          <p className="text-xl max-w-2xl mx-auto">
+            Join thousands of users who trust LogoTweak for their logo design
+            needs. Start creating your professional logo today!
           </p>
+          <div className="flex gap-2 w-full items-center justify-center mb-8 mt-2">
+            <Link
+              href="https://x.com/hubulwattan"
+              target="_blank"
+              className="text-white"
+            >
+              <TablerIconsImport.IconBrandTwitter size={28} />
+            </Link>
+            <Link
+              href="https://github.com/hubulwattan"
+              target="_blank"
+              className="text-white"
+            >
+              <TablerIconsImport.IconBrandGithub size={28} />
+            </Link>
+            <Link
+              href="https://linkedin.com/in/hellofaizan"
+              target="_blank"
+              className="text-white"
+            >
+              <TablerIconsImport.IconBrandLinkedin size={28} />
+            </Link> 
+          </div>
           <Button
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             size="lg"
             className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-3"
           >

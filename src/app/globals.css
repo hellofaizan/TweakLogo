@@ -235,3 +235,25 @@ body {
   background: linear-gradient(90deg, #fff, #2563eb);
   border-radius: 3px;
 }
+
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb:horizontal {
+  background: #8888;
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  background: #8888;
+  border-radius: 5px;
+}

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import Branding from "@/components/branding";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -172,8 +173,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col min-h-dvh md:min-h-screen">
+          <div className="flex flex-col">
             {children}
+            <Branding />
           </div>
         </ThemeProvider>
       </body>

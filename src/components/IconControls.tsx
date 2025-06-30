@@ -395,7 +395,7 @@ export function IconControls({
             <ColorPicker
               value={color}
               onChange={setColor}
-              width={284}
+              width={333}
               height={110}
               hideColorTypeBtns={true}
               hideInputType={true}
@@ -449,7 +449,7 @@ export function IconControls({
               value={fillColor}
               onChange={setFillColor}
               height={110}
-              width={284}
+              width={333}
               hideColorTypeBtns={true}
               hideInputs={true}
               hideOpacity={false}
