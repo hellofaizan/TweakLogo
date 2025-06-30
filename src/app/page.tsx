@@ -17,8 +17,6 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import Link from "next/link";
-import Footer from "@/components/footer";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -330,8 +328,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      <Footer />
     </main>
   );
 }
