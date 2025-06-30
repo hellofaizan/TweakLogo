@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://logotweak.vercel.app"),
+  metadataBase: new URL("https://logotweak.mohammadfaizan.in"),
   alternates: {
     canonical: "/",
   },
@@ -66,7 +66,7 @@ export const metadata: Metadata = {
     title: "LogoTweak - Free Online Logo Generator | Create Logos Like Canva",
     description:
       "Create stunning logos online with LogoTweak - the fastest free logo generator. Design professional logos with thousands of icons, custom colors, and instant downloads. No registration required.",
-    url: "https://logotweak.vercel.app",
+    url: "https://logotweak.mohammadfaizan.in",
     siteName: "LogoTweak",
     images: [
       {
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     description:
       "Create stunning logos online with LogoTweak - the fastest free logo generator. Design professional logos with thousands of icons, custom colors, and instant downloads.",
     images: ["/banner.png"],
-    creator: "@hellofaizan",
+    creator: "@hubulwattan",
   },
   robots: {
     index: true,
@@ -173,7 +173,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="flex flex-col">
+          <div className="min-h-dvh md:min-h-screen h-full">
             {children}
             <Branding />
           </div>

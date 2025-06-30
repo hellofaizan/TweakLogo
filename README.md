@@ -2,7 +2,7 @@
 
 **Create stunning logos online with LogoTweak** - the fastest free logo generator. Design professional logos with thousands of icons, custom colors, and instant downloads. No registration required. Make logos online like Canva but simpler and faster.
 
-![LogoTweak Preview](public/banner.png)
+![LogoTweak Preview](public/widebanner.png)
 
 ## ✨ Features
 

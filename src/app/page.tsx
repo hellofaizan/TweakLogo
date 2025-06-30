@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
+import Footer from "@/components/footer";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -113,16 +114,16 @@ export default function Home() {
   };
 
   return (
-    <main className="h-full">
+    <main>
       {/* SEO-optimized header section */}
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-8">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">
             Free Online Logo Generator
           </h1>
-          <div className="flex items-center gap-1 text-lg md:text-xl mb-6 justify-center">
+          <div className="flex items-center gap-[2px] text-lg md:text-xl mb-6 justify-center">
             Create stunning logos online with Logotweak
-            <img src="/logos/logo.png" alt="Logotweak" className="w-6 h-6" />
+            <img src="/logos/logo.png" alt="Logotweak" className="w-5 h-5" />
             <span> the fastest free logo maker</span>
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
@@ -281,7 +282,7 @@ export default function Home() {
       </section>
 
       {/* SEO-optimized features section */}
-      <section className="py-16">
+      <section className="pt-16">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -330,48 +331,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEO-optimized CTA section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Ready to Create Your Logo?
-          </h2>
-          <p className="text-xl max-w-2xl mx-auto">
-            Join thousands of users who trust LogoTweak for their logo design
-            needs. Start creating your professional logo today!
-          </p>
-          <div className="flex gap-2 w-full items-center justify-center mb-8 mt-2">
-            <Link
-              href="https://x.com/hubulwattan"
-              target="_blank"
-              className="text-white"
-            >
-              <TablerIconsImport.IconBrandTwitter size={28} />
-            </Link>
-            <Link
-              href="https://github.com/hubulwattan"
-              target="_blank"
-              className="text-white"
-            >
-              <TablerIconsImport.IconBrandGithub size={28} />
-            </Link>
-            <Link
-              href="https://linkedin.com/in/hellofaizan"
-              target="_blank"
-              className="text-white"
-            >
-              <TablerIconsImport.IconBrandLinkedin size={28} />
-            </Link> 
-          </div>
-          <Button
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            size="lg"
-            className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-3"
-          >
-            Start Creating Now
-          </Button>
-        </div>
-      </section>
+      <Footer />
     </main>
   );
 }
