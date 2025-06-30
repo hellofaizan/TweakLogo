@@ -1,6 +1,6 @@
-# 🎨 LogoTweak
+# 🎨 LogoTweak - Free Online Logo Generator
 
-A powerful, modern logo customization tool built with Next.js that allows you to create stunning logos with customizable icons, backgrounds, and export options.
+**Create stunning logos online with LogoTweak** - the fastest free logo generator. Design professional logos with thousands of icons, custom colors, and instant downloads. No registration required. Make logos online like Canva but simpler and faster.
 
 ![LogoTweak Preview](public/banner.png)
 
@@ -40,7 +40,7 @@ A powerful, modern logo customization tool built with Next.js that allows you to
 
 ### Prerequisites
 - Node.js 18+ 
-- npm, yarn, pnpm, or bun
+- npm or yarn
 
 ### Installation
 
