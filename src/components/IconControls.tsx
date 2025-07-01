@@ -117,6 +117,10 @@ export function IconControls({
   setFillColor,
   fillOpacity,
   setFillOpacity,
+  setBgColor,
+  setBgPadding,
+  setBgRounded,
+  setBgShadow,
 }: {
   iconName: string;
   setIconName: (name: string) => void;
@@ -134,6 +138,10 @@ export function IconControls({
   setFillColor: (c: string) => void;
   fillOpacity: number;
   setFillOpacity: (o: number) => void;
+  setBgColor: (c: string) => void;
+  setBgPadding: (v: number) => void;
+  setBgRounded: (v: number) => void;
+  setBgShadow: (v: number) => void;
 }) {
   const [sheetOpen, setSheetOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -143,6 +151,8 @@ export function IconControls({
   const [borderOpen, setBorderOpen] = useState(true);
   const iconTab = iconLibrary;
   const setIconTab = setIconLibrary;
+  const [activeTab, setActiveTab] = useState<'icons' | 'saved'>('icons');
+  const [savedIcons, setSavedIcons] = useState<any[]>([]);
 
   // Use all icon names from lucide-static, filter by search
   const lucideIconEntries = useMemo(
@@ -188,6 +198,17 @@ export function IconControls({
     );
   }
 
+  // Load saved icons from localStorage when sheet opens
+  React.useEffect(() => {
+    if (sheetOpen && activeTab === 'saved') {
+      try {
+        setSavedIcons(JSON.parse(localStorage.getItem('logotweak-saved-icons') || '[]'));
+      } catch {
+        setSavedIcons([]);
+      }
+    }
+  }, [sheetOpen, activeTab]);
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex gap-2 items-center">
@@ -218,98 +239,154 @@ export function IconControls({
                 Browse and select an icon from the list below.
               </SheetDescription>
             </SheetHeader>
-            <input
-              type="text"
-              placeholder="Search icons..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full border rounded px-2 py-1 focus:outline-none focus:ring-0 focus:border-primary"
-            />
-            {/* Tabs for icon libraries */}
+            {/* Icon library buttons and Saved button */}
             <div className="flex gap-2">
               <button
-                className={`px-3 py-1 rounded border cursor-pointer ${
-                  iconTab === "lucide" ? "bg-primary text-white" : "bg-muted"
-                }`}
+                className={`px-3 py-1 rounded border cursor-pointer ${iconTab === 'lucide' && activeTab !== 'saved' ? 'bg-primary text-white' : 'bg-muted'}`}
                 onClick={() => {
-                  setIconTab("lucide");
-                  setIconName(DEFAULT_ICON_LUCIDE);
+                  setActiveTab('icons');
+                  setIconTab('lucide');
                 }}
-              >
-                Lucide
-              </button>
+              >Lucide</button>
               <button
-                className={`px-3 py-1 rounded border cursor-pointer ${
-                  iconTab === "tabler" ? "bg-primary text-white" : "bg-muted"
-                }`}
+                className={`px-3 py-1 rounded border cursor-pointer ${iconTab === 'tabler' && activeTab !== 'saved' ? 'bg-primary text-white' : 'bg-muted'}`}
                 onClick={() => {
-                  setIconTab("tabler");
-                  setIconName(DEFAULT_ICON_TABLER);
+                  setActiveTab('icons');
+                  setIconTab('tabler');
                 }}
-              >
-                Tabler
-              </button>
+              >Tabler</button>
+              <button
+                className={`ml-auto px-3 py-1 rounded border cursor-pointer ${activeTab === 'saved' ? 'bg-primary text-white' : 'bg-muted'}`}
+                onClick={() => setActiveTab('saved')}
+              >Saved</button>
             </div>
             <TooltipProvider>
-              <div
-                className="grid grid-cols-5 gap-4 overflow-y-auto p-0.5"
-                ref={gridRef}
-                onScroll={handleScroll}
-              >
-                {(iconTab === "lucide" ? lucideIconEntries : tablerIconEntries)
-                  .slice(0, visibleCount)
-                  .map((name) => (
-                    <Tooltip key={name}>
-                      <TooltipTrigger>
+              <React.Fragment>
+                {activeTab === 'saved' ? (
+                  <div className="grid grid-cols-5 gap-4 overflow-y-auto p-0.5 max-h-[60vh]">
+                    {savedIcons.length === 0 && (
+                      <div className="col-span-5 text-center text-muted-foreground py-8">No saved icons yet.</div>
+                    )}
+                    {savedIcons.map((item) => {
+                      const IconComp = item.iconLibrary === 'lucide'
+                        ? LucideIcons[item.iconName]
+                        : TablerIcons[item.iconName];
+                      return (
                         <div
-                          className={`flex flex-col items-center p-2 border rounded cursor-pointer ${
-                            iconName === toPascalCase(name)
-                              ? "ring-2 ring-primary"
-                              : ""
-                          }`}
+                          key={item.id}
+                          className={`flex flex-col items-center p-2 border rounded cursor-pointer hover:ring-2 hover:ring-primary transition bg-transparent`}
                           onClick={() => {
-                            setIconName(toPascalCase(name));
-                            setIconLibrary(iconTab);
+                            setIconName(item.iconName);
+                            setIconLibrary(item.iconLibrary);
+                            setSize(item.iconSize);
+                            setRotate(item.iconRotate);
+                            setBorderWidth(item.iconBorderWidth);
+                            setColor(item.iconColor);
+                            setFillColor(item.fillColor);
+                            setFillOpacity(item.fillOpacity);
+                            if (setBgColor) setBgColor(item.bgColor);
+                            if (setBgPadding) setBgPadding(item.bgPadding);
+                            if (setBgRounded) setBgRounded(item.bgRounded);
+                            if (setBgShadow) setBgShadow(item.bgShadow);
                             setSheetOpen(false);
                           }}
-                          tabIndex={0}
-                          role="button"
-                          aria-label={name}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              setIconName(
-                                iconTab === "tabler"
-                                  ? "Icon" + toPascalCase(name)
-                                  : toPascalCase(name)
-                              );
-                              setIconLibrary(iconTab);
-                              setSheetOpen(false);
-                            }
-                          }}
                         >
-                          {iconTab === "lucide" ? (
-                            renderLucideSvg(
-                              (iconNodes as Record<string, any>)[name],
-                              32
-                            )
-                          ) : TablerIcons[toPascalCase(name)] ? (
-                            React.createElement(
-                              TablerIcons[toPascalCase(name)],
-                              { size: 32 }
-                            )
-                          ) : (
-                            <span className="text-xs text-red-500">
-                              Icon not found
-                            </span>
-                          )}
+                          <div
+                            className="flex items-center justify-center w-12 h-12 mb-1"
+                            style={{
+                              background: item.bgColor,
+                              borderRadius: item.bgRounded,
+                              boxShadow: item.bgShadow ? '0 2px 8px #0002' : undefined,
+                            }}
+                          >
+                            {IconComp ? (
+                              <IconComp
+                                size={32}
+                                stroke={item.iconColor}
+                                strokeWidth={item.iconBorderWidth}
+                                fill={item.fillColor}
+                                fillOpacity={item.fillOpacity}
+                                style={{ transform: `rotate(${item.iconRotate}deg)` }}
+                              />
+                            ) : (
+                              <span className="text-xs text-red-500">Icon not found</span>
+                            )}
+                          </div>
                         </div>
-                      </TooltipTrigger>
-                      <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
-                        <p className="text-xs">{name}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  ))}
-              </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      placeholder="Search icons..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="w-full border rounded px-2 py-1 focus:outline-none focus:ring-0 focus:border-primary"
+                    />
+                    <div
+                      className="grid grid-cols-5 gap-4 overflow-y-auto p-0.5"
+                      ref={gridRef}
+                      onScroll={handleScroll}
+                    >
+                      {(iconTab === "lucide" ? lucideIconEntries : tablerIconEntries)
+                        .slice(0, visibleCount)
+                        .map((name) => (
+                          <Tooltip key={name}>
+                            <TooltipTrigger>
+                              <div
+                                className={`flex flex-col items-center p-2 border rounded cursor-pointer ${
+                                  iconName === toPascalCase(name)
+                                    ? "ring-2 ring-primary"
+                                    : ""
+                                }`}
+                                onClick={() => {
+                                  setIconName(toPascalCase(name));
+                                  setIconLibrary(iconTab);
+                                  setSheetOpen(false);
+                                }}
+                                tabIndex={0}
+                                role="button"
+                                aria-label={name}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    setIconName(
+                                      iconTab === "tabler"
+                                        ? "Icon" + toPascalCase(name)
+                                        : toPascalCase(name)
+                                    );
+                                    setIconLibrary(iconTab);
+                                    setSheetOpen(false);
+                                  }
+                                }}
+                              >
+                                {iconTab === "lucide" ? (
+                                  renderLucideSvg(
+                                    (iconNodes as Record<string, any>)[name],
+                                    32
+                                  )
+                                ) : TablerIcons[toPascalCase(name)] ? (
+                                  React.createElement(
+                                    TablerIcons[toPascalCase(name)],
+                                    { size: 32 }
+                                  )
+                                ) : (
+                                  <span className="text-xs text-red-500">
+                                    Icon not found
+                                  </span>
+                                )}
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                              <p className="text-xs">{name}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ))}
+                    </div>
+                  </>
+                )}
+              </React.Fragment>
             </TooltipProvider>
             <SheetFooter>
               {(iconTab === "lucide"

@@ -9,7 +9,15 @@ import * as LucideIconsImport from "lucide-react";
 import * as TablerIconsImport from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Download, Palette, Image, Sparkles, Star } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  Palette,
+  Image,
+  Sparkles,
+  Star,
+  Save,
+} from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -17,7 +25,13 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { toast } from "sonner";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -232,6 +246,57 @@ export default function Home() {
                     <SelectItem value="favicon">Favicon</SelectItem>
                   </SelectContent>
                 </Select>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Save inside browser"
+                        className="border border-muted-foreground/20"
+                        onClick={() => {
+                          // Gather all current options
+                          const iconData = {
+                            id: Date.now(),
+                            iconName,
+                            iconLibrary,
+                            iconSize,
+                            iconRotate,
+                            iconBorderWidth,
+                            iconColor,
+                            fillColor,
+                            fillOpacity,
+                            bgRounded,
+                            bgPadding,
+                            bgShadow,
+                            bgColor,
+                          };
+                          // Get existing
+                          let saved = [];
+                          try {
+                            saved = JSON.parse(
+                              localStorage.getItem("logotweak-saved-icons") ||
+                                "[]"
+                            );
+                          } catch {}
+                          saved.unshift(iconData);
+                          localStorage.setItem(
+                            "logotweak-saved-icons",
+                            JSON.stringify(saved)
+                          );
+                          toast.success(
+                            "The icon and the tweaks have been saved. You can find them inside icon library."
+                          );
+                        }}
+                      >
+                        <Save className="w-5 h-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                      Save the icon and the tweaks
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <Button
                   onClick={handleDownload}
                   disabled={isDownloading}
@@ -296,6 +361,10 @@ export default function Home() {
                             setFillColor={setFillColor}
                             fillOpacity={fillOpacity}
                             setFillOpacity={setFillOpacity}
+                            setBgColor={setBgColor}
+                            setBgPadding={setBgPadding}
+                            setBgRounded={setBgRounded}
+                            setBgShadow={setBgShadow}
                           />
                         </div>
                       </TabsContent>
@@ -377,3 +446,6 @@ export default function Home() {
     </main>
   );
 }
+
+
+
