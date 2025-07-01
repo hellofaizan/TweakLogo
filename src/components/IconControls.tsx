@@ -25,7 +25,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import { Button } from "./ui/button";
 
 const DEFAULT_ICON_LUCIDE = "Aperture";
@@ -338,7 +338,17 @@ export function IconControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Size</label>
-          <div className="text-right text-xs">{size} px</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{size} px</span>
+            <button
+              aria-label="Reset size"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setSize(100)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -353,7 +363,17 @@ export function IconControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Rotate</label>
-          <div className="text-right text-xs">{rotate}&deg;</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{rotate}&deg;</span>
+            <button
+              aria-label="Reset rotate"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setRotate(0)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -367,7 +387,17 @@ export function IconControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Border width</label>
-          <div className="text-right text-xs">{borderWidth} px</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{borderWidth} px</span>
+            <button
+              aria-label="Reset border width"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setBorderWidth(0)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -430,8 +460,16 @@ export function IconControls({
           <div>
             <label className="block text-xs mb-1">
               Fill opacity{" "}
-              <span className="float-right">
+              <span className="flex items-center gap-1 float-right">
                 {Math.round(fillOpacity * 100)}%
+                <button
+                  aria-label="Reset fill opacity"
+                  className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+                  type="button"
+                  onClick={() => setFillOpacity(0)}
+                >
+                  <RotateCcw size={14} />
+                </button>
               </span>
             </label>
             <input

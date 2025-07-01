@@ -2,6 +2,7 @@
 
 import ColorPicker from "react-best-gradient-color-picker";
 import React, { useState, useEffect, useRef } from "react";
+import { RefreshCcw, RotateCcw } from "lucide-react";
 
 const SHADOWS = ["XS", "SM", "MD", "LG", "XL"];
 
@@ -39,7 +40,22 @@ export function BackgroundControls({
 
   // Presets
   const solidPresets = [
-    "#080166", "#0974f1", "#f3f520", "#59d102", "#f40752", "#f74c06", "#c11e38", "#f83d5c", "#b94c98", "#7f0012", "#f97d5b", "#020344", "#0968e5", "#FF7554", "#AF33F2", "#F2B705"
+    "#080166",
+    "#0974f1",
+    "#f3f520",
+    "#59d102",
+    "#f40752",
+    "#f74c06",
+    "#c11e38",
+    "#f83d5c",
+    "#b94c98",
+    "#7f0012",
+    "#f97d5b",
+    "#020344",
+    "#0968e5",
+    "#FF7554",
+    "#AF33F2",
+    "#F2B705",
   ];
   const gradientPresets = [
     "linear-gradient(45deg,rgba(8, 1, 102, 1) 0%, rgba(9, 9, 121, 1) 42%, rgba(0, 94, 255, 1) 100%)",
@@ -65,7 +81,17 @@ export function BackgroundControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Rounded</label>
-          <div className="text-right text-xs">{rounded} px</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{rounded} px</span>
+            <button
+              aria-label="Reset rounded"
+              className="text-sm cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setRounded(0)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -79,7 +105,17 @@ export function BackgroundControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Padding</label>
-          <div className="text-right text-xs">{padding} px</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{padding} px</span>
+            <button
+              aria-label="Reset padding"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setPadding(0)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
         <input
           type="range"
@@ -93,10 +129,20 @@ export function BackgroundControls({
       <div>
         <div className="flex items-center justify-between">
           <label className="block text-xs mb-1">Shadow</label>
-          <div className="text-right text-xs">{SHADOWS[shadow]}</div>
+          <div className="flex items-center gap-1 text-right text-xs">
+            <span>{SHADOWS[shadow]}</span>
+            <button
+              aria-label="Reset shadow"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              type="button"
+              onClick={() => setShadow(0)}
+            >
+              <RotateCcw size={14} />
+            </button>
+          </div>
         </div>
 
-        <div className="w-full max-w-xs">
+        <div className="w-full">
           <input
             type="range"
             min={0}
@@ -105,7 +151,7 @@ export function BackgroundControls({
             onChange={(e) => {
               setShadow(Number(e.target.value));
             }}
-            className="range range-lg range-primary"
+            className="w-full range range-lg range-primary"
           />
           <div className="flex justify-between px-2.5 mt-1 text-xs">
             <span>|</span>
@@ -140,15 +186,17 @@ export function BackgroundControls({
             className={`rounded-md p-2 custom-gradient-picker`}
           />
           <div className="flex flex-wrap gap-2 mt-2 pb-3 justify-center">
-            {(colorMode === "solid" ? solidPresets : gradientPresets).map((preset, idx) => (
-              <div
-                key={idx}
-                className="w-7 h-7 rounded cursor-pointer border border-border"
-                style={{ background: preset }}
-                onClick={() => setBgColor(preset)}
-                title={preset}
-              />
-            ))}
+            {(colorMode === "solid" ? solidPresets : gradientPresets).map(
+              (preset, idx) => (
+                <div
+                  key={idx}
+                  className="w-7 h-7 rounded cursor-pointer border border-border"
+                  style={{ background: preset }}
+                  onClick={() => setBgColor(preset)}
+                  title={preset}
+                />
+              )
+            )}
           </div>
         </div>
       </div>
