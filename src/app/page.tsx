@@ -9,7 +9,7 @@ import * as LucideIconsImport from "lucide-react";
 import * as TablerIconsImport from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Download, Palette, Image, Sparkles } from "lucide-react";
+import { Loader2, Download, Palette, Image, Sparkles, Star } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -17,6 +17,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -62,52 +63,96 @@ export default function Home() {
   const [resolution, setResolution] = useState("1x");
   const [format, setFormat] = useState("png");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isFaviconExporting, setIsFaviconExporting] = useState(false);
 
   const handleDownload = async () => {
     if (!previewRef.current) return;
     setIsDownloading(true);
     try {
-      let scale = 1;
-      switch (resolution) {
-        case "0.5x":
-          scale = 0.5;
-          break;
-        case "2x":
-          scale = 2;
-          break;
-        case "4x":
-          scale = 4;
-          break;
-        case "8x":
-          scale = 8;
-          break;
-        case "fullres":
-          scale = 10;
-          break;
-        default:
-          scale = 1;
-      }
       let dataUrl;
-      if (format === "svg") {
+      if (format === "favicon") {
+        // Export as 64x64 PNG favicon
+        const node = previewRef.current;
+        const originalWidth = node.style.width;
+        const originalHeight = node.style.height;
+        node.style.width = "64px";
+        node.style.height = "64px";
+        await new Promise((r) => setTimeout(r, 10));
         dataUrl = await import("html-to-image").then((mod) =>
-          mod.toSvg(previewRef.current!)
+          mod.toPng(node, { pixelRatio: 1, width: 64, height: 64 })
         );
-      } else if (format === "jpg") {
-        dataUrl = await import("html-to-image").then((mod) =>
-          mod.toJpeg(previewRef.current!, { quality: 1, pixelRatio: scale })
-        );
+        node.style.width = originalWidth;
+        node.style.height = originalHeight;
       } else {
-        // PNG
-        dataUrl = await import("html-to-image").then((mod) =>
-          mod.toPng(previewRef.current!, { pixelRatio: scale })
-        );
+        let scale = 1;
+        switch (resolution) {
+          case "0.5x":
+            scale = 0.5;
+            break;
+          case "2x":
+            scale = 2;
+            break;
+          case "4x":
+            scale = 4;
+            break;
+          case "8x":
+            scale = 8;
+            break;
+          case "fullres":
+            scale = 10;
+            break;
+          default:
+            scale = 1;
+        }
+        if (format === "svg") {
+          dataUrl = await import("html-to-image").then((mod) =>
+            mod.toSvg(previewRef.current!)
+          );
+        } else if (format === "jpg") {
+          dataUrl = await import("html-to-image").then((mod) =>
+            mod.toJpeg(previewRef.current!, { quality: 1, pixelRatio: scale })
+          );
+        } else {
+          // PNG
+          dataUrl = await import("html-to-image").then((mod) =>
+            mod.toPng(previewRef.current!, { pixelRatio: scale })
+          );
+        }
       }
       const link = document.createElement("a");
-      link.download = `logo.${format}`;
+      link.download = format === "favicon" ? "favicon.png" : `logo.${format}`;
       link.href = dataUrl;
       link.click();
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  // Export as favicon (64x64 PNG)
+  const handleExportFavicon = async () => {
+    if (!previewRef.current) return;
+    setIsFaviconExporting(true);
+    try {
+      // Temporarily resize the preview for favicon export
+      const node = previewRef.current;
+      const originalWidth = node.style.width;
+      const originalHeight = node.style.height;
+      node.style.width = "64px";
+      node.style.height = "64px";
+      // Wait for DOM to update
+      await new Promise((r) => setTimeout(r, 10));
+      const dataUrl = await import("html-to-image").then((mod) =>
+        mod.toPng(node, { pixelRatio: 1, width: 64, height: 64 })
+      );
+      // Restore original size
+      node.style.width = originalWidth;
+      node.style.height = originalHeight;
+      const link = document.createElement("a");
+      link.download = "favicon.png";
+      link.href = dataUrl;
+      link.click();
+    } finally {
+      setIsFaviconExporting(false);
     }
   };
 
@@ -184,6 +229,7 @@ export default function Home() {
                     <SelectItem value="png">PNG</SelectItem>
                     <SelectItem value="jpg">JPG</SelectItem>
                     <SelectItem value="svg">SVG</SelectItem>
+                    <SelectItem value="favicon">Favicon</SelectItem>
                   </SelectContent>
                 </Select>
                 <Button
