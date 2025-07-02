@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React from "react";
+import { IconBrandGithub, IconBrandTwitter } from "@tabler/icons-react";
 
 export default function Navbar() {
   return (
@@ -13,6 +14,9 @@ export default function Navbar() {
         <Link href="/about" className="hover:text-[var(--primary)] transition-colors">About</Link>
         <Link href="/features" className="hover:text-[var(--primary)] transition-colors">Features</Link>
         <Link href="/templates" className="hover:text-[var(--primary)] transition-colors">Templates</Link>
+
+        <Link href="https://github.com/mohammadfaizan/logotweak" className="hover:text-[var(--primary)] transition-colors"><IconBrandGithub /></Link>
+        <Link href="https://x.com/hubulwattan" className="hover:text-[var(--primary)] transition-colors"><IconBrandTwitter /></Link>
       </div>
     </nav>
   );
