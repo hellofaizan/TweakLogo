@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Branding from "@/components/branding";
 import { Toaster } from "@/components/ui/sonner";
+import Navbar from "@/components/navbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -174,7 +175,8 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <div className="min-h-dvh md:min-h-screen h-full">
+          <Navbar />
+          <div className="min-h-dvh md:min-h-screen h-full pt-14">
             {children}
             <Branding />
             <Toaster />
