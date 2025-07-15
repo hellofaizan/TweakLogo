@@ -16,7 +16,7 @@ export default function Navbar() {
         <Link href="/templates" className="hover:text-[var(--primary)] transition-colors">Templates</Link>
 
         <Link href="https://github.com/mohammadfaizan/logotweak" className="hover:text-[var(--primary)] transition-colors"><IconBrandGithub /></Link>
-        <Link href="https://x.com/hubulwattan" className="hover:text-[var(--primary)] transition-colors"><IconBrandTwitter /></Link>
+        <Link href="https://x.com/mofaizandev" className="hover:text-[var(--primary)] transition-colors"><IconBrandTwitter /></Link>
       </div>
     </nav>
   );
