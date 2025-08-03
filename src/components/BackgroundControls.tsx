@@ -3,6 +3,7 @@
 import ColorPicker from "react-best-gradient-color-picker";
 import React, { useState, useEffect, useRef } from "react";
 import { RefreshCcw, RotateCcw } from "lucide-react";
+import { SelectValue } from "@radix-ui/react-select";
 
 const SHADOWS = ["XS", "SM", "MD", "LG", "XL"];
 
@@ -77,15 +78,16 @@ export function BackgroundControls({
   ];
 
   return (
-    <div className="flex flex-col gap-4">
-      <div>
+    <div className="space-y-6">
+      {/* Rounded Control */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-xs mb-1">Rounded</label>
-          <div className="flex items-center gap-1 text-right text-xs">
+          <label className="text-sm font-medium">Rounded</label>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{rounded} px</span>
             <button
               aria-label="Reset rounded"
-              className="text-sm cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
+              className="text-xs cursor-pointer px-1 text-muted-foreground hover:text-primary focus:outline-none"
               type="button"
               onClick={() => setRounded(0)}
             >
@@ -99,13 +101,15 @@ export function BackgroundControls({
           max={300}
           value={rounded}
           onChange={(e) => setRounded(Number(e.target.value))}
-          className="w-full range range-lg range-primary"
+          className="w-full range cursor-pointer range-lg range-primary"
         />
       </div>
-      <div>
+
+      {/* Padding Control */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-xs mb-1">Padding</label>
-          <div className="flex items-center gap-1 text-right text-xs">
+          <label className="text-sm font-medium">Padding</label>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{padding} px</span>
             <button
               aria-label="Reset padding"
@@ -123,13 +127,15 @@ export function BackgroundControls({
           max={100}
           value={padding}
           onChange={(e) => setPadding(Number(e.target.value))}
-          className="w-full range range-lg range-primary"
+          className="w-full range cursor-pointer range-lg range-primary"
         />
       </div>
-      <div>
+
+      {/* Shadow Control */}
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="block text-xs mb-1">Shadow</label>
-          <div className="flex items-center gap-1 text-right text-xs">
+          <label className="text-sm font-medium">Shadow</label>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>{SHADOWS[shadow]}</span>
             <button
               aria-label="Reset shadow"
@@ -141,8 +147,7 @@ export function BackgroundControls({
             </button>
           </div>
         </div>
-
-        <div className="w-full">
+        <div className="space-y-2">
           <input
             type="range"
             min={0}
@@ -151,21 +156,14 @@ export function BackgroundControls({
             onChange={(e) => {
               setShadow(Number(e.target.value));
             }}
-            className="w-full range range-lg range-primary"
+            className="w-full range cursor-pointer range-lg range-primary"
           />
-          <div className="flex justify-between px-2.5 mt-1 text-xs">
-            <span>|</span>
-            <span>|</span>
-            <span>|</span>
-            <span>|</span>
-            <span>|</span>
-          </div>
-          <div className="flex justify-between px-1.5 mt-1 text-xs">
+          <div className="flex justify-between px-2 text-xs text-muted-foreground">
             {SHADOWS.map((s, i) => (
               <span
                 key={s}
                 className={`${
-                  shadow === i ? "range-primary" : "text-muted-foreground"
+                  shadow === i ? "text-primary font-medium" : ""
                 }`}
               >
                 {s}
@@ -174,23 +172,25 @@ export function BackgroundControls({
           </div>
         </div>
       </div>
-      <div>
-        <label className="block text-xs mb-1">Background</label>
-        <div className="bg-background border border-border rounded-md shadow-sm w-full">
+
+      {/* Background Color */}
+      <div className="space-y-3">
+        <label className="text-sm font-medium">Background</label>
+        <div className="bg-background border border-border rounded-lg shadow-sm w-full">
           <ColorPicker
             value={bgColor}
             onChange={setBgColor}
             height={120}
             width={333}
             hidePresets={true}
-            className={`rounded-md p-2 custom-gradient-picker`}
+            className="rounded-lg p-2 custom-gradient-picker"
           />
           <div className="flex flex-wrap gap-2 mt-2 pb-3 justify-center">
             {(colorMode === "solid" ? solidPresets : gradientPresets).map(
               (preset, idx) => (
                 <div
                   key={idx}
-                  className="w-7 h-7 rounded cursor-pointer border border-border"
+                  className="w-7 h-7 rounded cursor-pointer border border-border hover:scale-110 transition-transform"
                   style={{ background: preset }}
                   onClick={() => setBgColor(preset)}
                   title={preset}

@@ -6,7 +6,6 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 
-// Accept props for icon, size, color, border, rotation, and background
 export const LogoPreview = forwardRef<HTMLDivElement, {
   Icon?: React.ComponentType<any>;
   size?: number;
@@ -20,7 +19,7 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   fillColor?: string;
   fillOpacity?: number;
 }>(({
-  Icon = undefined, // React component for the icon
+  Icon = undefined,
   size = 256,
   color = "#fd7200",
   borderWidth = 8,
@@ -34,7 +33,6 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
 }, ref) => {
   const [hovered, setHovered] = useState(false);
 
-  // Tailwind shadow classes
   const shadowMap = [
     "shadow-none",
     "shadow-sm",
@@ -45,8 +43,7 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   ];
   const shadowClass = shadowMap[bgShadow] || "shadow-md";
 
-  // Canvas size
-  const CANVAS_SIZE = 500;
+  const CANVAS_SIZE = 600;
   const bgSize = CANVAS_SIZE - 2 * bgPadding;
 
   return (
@@ -54,7 +51,7 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
       <Tooltip>
         <TooltipTrigger>
           <div
-            className={`relative flex items-center justify-center border-dashed border-2 overflow-hidden hover:bg-muted hover:border-primary`}
+            className={`relative flex items-center justify-center overflow-hidden rounded-lg border border-border bg-background`}
             style={{
               width: CANVAS_SIZE,
               height: CANVAS_SIZE,
@@ -62,6 +59,11 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
               minHeight: CANVAS_SIZE,
               maxWidth: CANVAS_SIZE,
               maxHeight: CANVAS_SIZE,
+              backgroundImage: `
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '20px 20px',
             }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
@@ -69,13 +71,12 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
             {/* Background layer */}
             <div
               ref={ref}
-              className={`flex items-center justify-center ${shadowClass}`}
+              className={`flex items-center justify-center ${shadowClass} transition-all duration-200`}
               style={{
                 width: bgSize,
                 height: bgSize,
                 background: bgColor,
                 borderRadius: bgRounded,
-                transition: "all 0.2s",
               }}
             >
               {/* Centered icon */}
