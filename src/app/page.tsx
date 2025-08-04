@@ -17,6 +17,7 @@ import {
   Zap,
   Undo2,
   Type,
+  Shuffle,
 } from "lucide-react";
 import {
   Select,
@@ -76,6 +77,22 @@ export default function Home() {
   const [resolution, setResolution] = useState("1x");
   const [format, setFormat] = useState("png");
   const [isDownloading, setIsDownloading] = useState(false);
+
+  // Randomizer arrays - only use icons that exist in both libraries
+  const randomIcons = ["Zap", "Heart", "Star", "Smile", "Coffee", "Music", "Camera", "Gift", "Leaf", "Rocket", "Diamond", "Crown", "Fire", "Moon", "Sun", "Cloud", "Tree", "Flower", "Car", "Plane", "Ship", "Bike", "Book", "Pen", "Phone", "Laptop", "Gamepad", "Headphones", "Microphone", "Speaker", "Lightbulb", "Settings", "Home", "User", "Mail", "Search", "Plus", "Minus", "Check", "X", "ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
+  const randomColors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9", "#F8C471", "#82E0AA", "#F1948A", "#85C1E9", "#D7BDE2", "#F9E79F", "#A9DFBF", "#FAD7A0", "#D5A6BD", "#A3E4D7"];
+  const randomGradients = [
+    "linear-gradient(45deg, #FF6B6B 0%, #4ECDC4 100%)",
+    "linear-gradient(45deg, #A8E6CF 0%, #DCEDC8 100%)",
+    "linear-gradient(45deg, #FFD3B6 0%, #FFAAA5 100%)",
+    "linear-gradient(45deg, #D4A5A5 0%, #392F5A 100%)",
+    "linear-gradient(45deg, #FF9A9E 0%, #FECFEF 100%)",
+    "linear-gradient(45deg, #A8E6CF 0%, #88D8C0 100%)",
+    "linear-gradient(45deg, #FFD3B6 0%, #FF8B94 100%)",
+    "linear-gradient(45deg, #FF9A9E 0%, #FAD0C4 100%)",
+    "linear-gradient(45deg, #A8E6CF 0%, #DCEDC8 100%)",
+    "linear-gradient(45deg, #FFD3B6 0%, #FFAAA5 100%)"
+  ];
 
   const presets = [
     {
@@ -177,6 +194,38 @@ export default function Home() {
     toast.success(`Applied ${preset.name} preset`);
   };
 
+  const randomizeLogo = () => {
+    // Random icon
+    const randomIcon = randomIcons[Math.floor(Math.random() * randomIcons.length)];
+    
+    // Random icon library
+    const randomLibrary = Math.random() > 0.5 ? "lucide" : "tabler";
+    setIconLibrary(randomLibrary);
+    
+    // Set icon name based on library
+    if (randomLibrary === "tabler") {
+      setIconName("Icon" + randomIcon);
+    } else {
+      setIconName(randomIcon);
+    }
+    
+    // Random icon properties
+    setIconSize(Math.floor(Math.random() * 300) + 200); // 200-500px
+    setIconRotate(Math.floor(Math.random() * 360) - 180); // -180 to 180 degrees
+    setIconBorderWidth(Math.random() * 3 + 1); // 1-4px
+    setIconColor(randomColors[Math.floor(Math.random() * randomColors.length)]);
+    setFillColor(randomColors[Math.floor(Math.random() * randomColors.length)]);
+    setFillOpacity(Math.random() * 0.8 + 0.2); // 0.2-1.0
+    
+    // Random background properties
+    setBgRounded(Math.floor(Math.random() * 200) + 50); // 50-250px
+    setBgPadding(Math.floor(Math.random() * 60) + 10); // 10-70px
+    setBgShadow(Math.floor(Math.random() * 4) + 1); // 1-4 shadow levels
+    setBgColor(randomGradients[Math.floor(Math.random() * randomGradients.length)]);
+    
+    toast.success("🎲 Logo randomized!");
+  };
+
   useEffect(() => {
     if (selectedTextId) {
       setActiveTab("text");
@@ -215,6 +264,25 @@ export default function Home() {
               ))}
             </div>
           </div>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={randomizeLogo}
+                  className="gap-2"
+                >
+                  <Shuffle className="w-4 h-4" />
+                  Random
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                <p className="text-xs">Generate a random logo design</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           
           <ModeToggle />
         </div>
