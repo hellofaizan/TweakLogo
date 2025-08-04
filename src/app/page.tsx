@@ -188,7 +188,7 @@ export default function Home() {
       <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <Zap className="w-6 h-6 text-primary" />
+            <LucideIconsImport.MousePointer2 className="w-6 h-6 text-primary" />
             <span className="font-bold text-xl">Logo Tweak</span>
           </div>
         </div>
