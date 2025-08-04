@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { ModeToggle } from "@/components/ModeToggle";
 import { LogoPreview } from "@/components/LogoPreview";
 import { IconControls } from "@/components/IconControls";
 import { BackgroundControls } from "@/components/BackgroundControls";
+import { TextLayer, TextRenderer, TextLayerData } from "@/components/TextLayer";
 import * as LucideIconsImport from "lucide-react";
 import * as TablerIconsImport from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import {
   Save,
   Zap,
   Undo2,
+  Type,
 } from "lucide-react";
 import {
   Select,
@@ -30,7 +32,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "sonner";
-import Branding from "@/components/branding";
 
 const LucideIcons = LucideIconsImport as unknown as Record<
   string,
@@ -44,7 +45,6 @@ const DEFAULT_ICON_LUCIDE = "Zap";
 const DEFAULT_ICON_TABLER = "IconZap";
 
 export default function Home() {
-  // Icon state
   const [iconName, setIconName] = useState(DEFAULT_ICON_LUCIDE);
   const [iconLibrary, setIconLibrary] = useState<"lucide" | "tabler">("lucide");
   const [iconSize, setIconSize] = useState(400);
@@ -53,15 +53,16 @@ export default function Home() {
   const [iconColor, setIconColor] = useState("#222222");
   const [fillColor, setFillColor] = useState("#ffffff");
   const [fillOpacity, setFillOpacity] = useState(0.41);
-  // Background state
   const [bgRounded, setBgRounded] = useState(50);
   const [bgPadding, setBgPadding] = useState(15);
   const [bgShadow, setBgShadow] = useState(2);
   const [bgColor, setBgColor] = useState(
     "linear-gradient(90deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%)"
   );
-  // Tab state
-  const [activeTab, setActiveTab] = useState<"icon" | "background">("icon");
+  const [activeTab, setActiveTab] = useState<"icon" | "background" | "text">("icon");
+
+  const [textLayers, setTextLayers] = useState<TextLayerData[]>([]);
+  const [selectedTextId, setSelectedTextId] = useState<string | null>(null);
 
   let Icon: React.ComponentType<any> | undefined = undefined;
   if (iconLibrary === "tabler") {
@@ -72,12 +73,10 @@ export default function Home() {
 
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Add state for resolution and format
   const [resolution, setResolution] = useState("1x");
   const [format, setFormat] = useState("png");
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Preset designs
   const presets = [
     {
       id: 1,
@@ -145,7 +144,7 @@ export default function Home() {
         default:
           scale = 1;
       }
-
+      
       let dataUrl;
       if (format === "svg") {
         dataUrl = await import("html-to-image").then((mod) =>
@@ -160,7 +159,7 @@ export default function Home() {
           mod.toPng(previewRef.current!, { pixelRatio: scale })
         );
       }
-
+      
       const link = document.createElement("a");
       link.download = `logo.${format}`;
       link.href = dataUrl;
@@ -178,9 +177,14 @@ export default function Home() {
     toast.success(`Applied ${preset.name} preset`);
   };
 
+  useEffect(() => {
+    if (selectedTextId) {
+      setActiveTab("text");
+    }
+  }, [selectedTextId]);
+
   return (
     <div className="h-screen flex flex-col bg-background">
-      {/* Top Header */}
       <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -188,13 +192,13 @@ export default function Home() {
             <span className="font-bold text-xl">LogoFast</span>
           </div>
         </div>
-
+        
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" className="gap-2">
             <Undo2 className="w-4 h-4" />
             Undo
           </Button>
-
+          
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">Presets:</span>
             <div className="flex gap-2">
@@ -206,57 +210,119 @@ export default function Home() {
                   style={{ backgroundColor: preset.bgColor }}
                   title={preset.name}
                 >
-                  <Zap
-                    className="w-4 h-4"
-                    style={{ color: preset.iconColor }}
-                  />
+                  <Zap className="w-4 h-4" style={{ color: preset.iconColor }} />
                 </button>
               ))}
             </div>
           </div>
-
+          
           <ModeToggle />
         </div>
       </header>
 
-      {/* Main Content */}
       <div className="flex-1 flex">
-        {/* Left Sidebar Navigation */}
-        <aside className="w-56 border-r border-border bg-card p-4">
-          <nav className="flex flex-col justify-between items-center w-full h-full">
-            <div className="flex flex-col w-full space-y-2">
-              <button
-                onClick={() => setActiveTab("icon")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
-                  activeTab === "icon"
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                <Zap className="w-5 h-5" />
-                <span className="font-medium">Icon</span>
-              </button>
+        <aside className="w-64 border-r border-border bg-card p-4">
+          <nav className="space-y-2">
+            <button
+              onClick={() => setActiveTab("icon")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                activeTab === "icon"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Zap className="w-5 h-5" />
+              <span className="font-medium">Icon</span>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("background")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                activeTab === "background"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Palette className="w-5 h-5" />
+              <span className="font-medium">Background</span>
+            </button>
 
-              <button
-                onClick={() => setActiveTab("background")}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors cursor-pointer ${
-                  activeTab === "background"
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted"
-                }`}
-              >
-                <Palette className="w-5 h-5" />
-                <span className="font-medium">Background</span>
-              </button>
-            </div>
-
-            <Branding />
+            <button
+              onClick={() => setActiveTab("text")}
+              className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                activeTab === "text"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Type className="w-5 h-5" />
+              <span className="font-medium">Text</span>
+            </button>
           </nav>
         </aside>
 
-        {/* Right Preview Canvas */}
+        <main className="w-96 border-r border-border bg-card p-6 overflow-y-auto">
+          {activeTab === "icon" ? (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                  {Icon && <Icon size={20} />}
+                </div>
+                <span className="font-medium">{iconName}</span>
+              </div>
+              
+              <IconControls
+                iconName={iconName}
+                setIconName={setIconName}
+                iconLibrary={iconLibrary}
+                setIconLibrary={setIconLibrary}
+                size={iconSize}
+                setSize={setIconSize}
+                rotate={iconRotate}
+                setRotate={setIconRotate}
+                borderWidth={iconBorderWidth}
+                setBorderWidth={setIconBorderWidth}
+                color={iconColor}
+                setColor={setIconColor}
+                fillColor={fillColor}
+                setFillColor={setFillColor}
+                fillOpacity={fillOpacity}
+                setFillOpacity={setFillOpacity}
+                setBgColor={setBgColor}
+                setBgPadding={setBgPadding}
+                setBgRounded={setBgRounded}
+                setBgShadow={setBgShadow}
+              />
+            </div>
+          ) : activeTab === "background" ? (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold mb-6">Background Settings</h3>
+              <BackgroundControls
+                rounded={bgRounded}
+                setRounded={setBgRounded}
+                padding={bgPadding}
+                setPadding={setBgPadding}
+                shadow={bgShadow}
+                setShadow={setBgShadow}
+                bgColor={bgColor}
+                setBgColor={setBgColor}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold mb-6">Text Settings</h3>
+              <TextLayer
+                textLayers={textLayers}
+                setTextLayers={setTextLayers}
+                selectedTextId={selectedTextId}
+                setSelectedTextId={setSelectedTextId}
+                canvasSize={600}
+              />
+            </div>
+          )}
+        </main>
+
         <div className="flex-1 flex flex-col">
-          {/* Preview Area */}
           <div className="flex-1 flex items-center justify-center p-8 bg-muted/20">
             <div className="relative">
               <LogoPreview
@@ -272,11 +338,18 @@ export default function Home() {
                 bgColor={bgColor}
                 fillColor={fillColor}
                 fillOpacity={fillOpacity}
+                textLayers={textLayers}
+                selectedTextId={selectedTextId}
+                setSelectedTextId={setSelectedTextId}
+                updateTextLayer={(id, updates) => {
+                  setTextLayers(textLayers.map(layer => 
+                    layer.id === id ? { ...layer, ...updates } : layer
+                  ));
+                }}
               />
             </div>
           </div>
 
-          {/* Export Controls */}
           <div className="border-t border-border bg-card p-4">
             <div className="flex items-center gap-4">
               <Select value={resolution} onValueChange={setResolution}>
@@ -312,7 +385,6 @@ export default function Home() {
                       size="icon"
                       aria-label="Save inside browser"
                       onClick={() => {
-                        // Gather all current options
                         const iconData = {
                           id: Date.now(),
                           iconName,
@@ -327,8 +399,8 @@ export default function Home() {
                           bgPadding,
                           bgShadow,
                           bgColor,
+                          textLayers,
                         };
-                        // Get existing
                         let saved = [];
                         try {
                           saved = JSON.parse(
@@ -370,61 +442,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-
-        {/* Central Control Panel */}
-        <main className="w-[25rem] border-l border-border bg-card p-6 overflow-y-auto">
-          {activeTab === "icon" ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
-                  {Icon && <Icon size={20} />}
-                </div>
-                <span className="font-medium">{iconName}</span>
-              </div>
-
-              <IconControls
-                iconName={iconName}
-                setIconName={setIconName}
-                iconLibrary={iconLibrary}
-                setIconLibrary={setIconLibrary}
-                size={iconSize}
-                setSize={setIconSize}
-                rotate={iconRotate}
-                setRotate={setIconRotate}
-                borderWidth={iconBorderWidth}
-                setBorderWidth={setIconBorderWidth}
-                color={iconColor}
-                setColor={setIconColor}
-                fillColor={fillColor}
-                setFillColor={setFillColor}
-                fillOpacity={fillOpacity}
-                setFillOpacity={setFillOpacity}
-                setBgColor={setBgColor}
-                setBgPadding={setBgPadding}
-                setBgRounded={setBgRounded}
-                setBgShadow={setBgShadow}
-              />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mb-6">
-                Background Settings
-              </h3>
-              <BackgroundControls
-                rounded={bgRounded}
-                setRounded={setBgRounded}
-                padding={bgPadding}
-                setPadding={setBgPadding}
-                shadow={bgShadow}
-                setShadow={setBgShadow}
-                bgColor={bgColor}
-                setBgColor={setBgColor}
-              />
-            </div>
-          )}
-        </main>
       </div>
+
+
     </div>
   );
 }

@@ -5,6 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { TextLayerData } from "./TextLayer";
 
 export const LogoPreview = forwardRef<HTMLDivElement, {
   Icon?: React.ComponentType<any>;
@@ -18,6 +19,10 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   bgColor?: string;
   fillColor?: string;
   fillOpacity?: number;
+  textLayers?: TextLayerData[];
+  selectedTextId?: string | null;
+  setSelectedTextId?: (id: string | null) => void;
+  updateTextLayer?: (id: string, updates: Partial<TextLayerData>) => void;
 }>(({
   Icon = undefined,
   size = 256,
@@ -30,8 +35,14 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   bgColor = "#ffffff",
   fillColor = "#ffffff",
   fillOpacity = 1,
+  textLayers = [],
+  selectedTextId = null,
+  setSelectedTextId = () => {},
+  updateTextLayer = () => {},
 }, ref) => {
   const [hovered, setHovered] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
   const shadowMap = [
     "shadow-none",
@@ -43,8 +54,59 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   ];
   const shadowClass = shadowMap[bgShadow] || "shadow-md";
 
+  // Canvas size
   const CANVAS_SIZE = 600;
   const bgSize = CANVAS_SIZE - 2 * bgPadding;
+
+  const handleTextMouseDown = (e: React.MouseEvent, layer: TextLayerData) => {
+    e.stopPropagation();
+    setSelectedTextId(layer.id);
+    
+    const rect = (ref as any)?.current?.getBoundingClientRect();
+    if (rect) {
+      setDragOffset({
+        x: e.clientX - rect.left - layer.x,
+        y: e.clientY - rect.top - layer.y
+      });
+      setIsDragging(true);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !selectedTextId) return;
+
+    const rect = (ref as any)?.current?.getBoundingClientRect();
+    if (rect) {
+      const newX = e.clientX - rect.left - dragOffset.x;
+      const newY = e.clientY - rect.top - dragOffset.y;
+
+      updateTextLayer(selectedTextId, {
+        x: Math.max(0, Math.min(bgSize - 100, newX)),
+        y: Math.max(0, Math.min(bgSize - 50, newY))
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  React.useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove as any);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove as any);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, selectedTextId, dragOffset, updateTextLayer]);
+
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    if (e.target === (ref as any)?.current) {
+      setSelectedTextId(null);
+    }
+  };
 
   return (
     <TooltipProvider>
@@ -67,11 +129,11 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
             }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
+            onClick={handleCanvasClick}
           >
-            {/* Background layer */}
             <div
               ref={ref}
-              className={`flex items-center justify-center ${shadowClass} transition-all duration-200`}
+              className={`flex items-center justify-center ${shadowClass} transition-all duration-200 relative`}
               style={{
                 width: bgSize,
                 height: bgSize,
@@ -79,7 +141,6 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
                 borderRadius: bgRounded,
               }}
             >
-              {/* Centered icon */}
               {Icon && (
                 <Icon
                   size={size}
@@ -93,6 +154,31 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
                   }}
                 />
               )}
+
+              {textLayers.map((layer) => (
+                <div
+                  key={layer.id}
+                  className={`absolute pointer-events-auto cursor-move select-none ${
+                    selectedTextId === layer.id ? 'ring-2 ring-blue-500' : ''
+                  }`}
+                  style={{
+                    left: layer.x,
+                    top: layer.y,
+                    transform: `rotate(${layer.rotation}deg)`,
+                    fontFamily: layer.fontFamily,
+                    fontSize: layer.fontSize,
+                    fontWeight: layer.fontWeight,
+                    color: layer.color,
+                    textAlign: layer.textAlign as any,
+                    opacity: layer.opacity,
+                    userSelect: 'none',
+                    whiteSpace: 'nowrap',
+                  }}
+                  onMouseDown={(e) => handleTextMouseDown(e, layer)}
+                >
+                  {layer.text}
+                </div>
+              ))}
             </div>
           </div>
         </TooltipTrigger>
