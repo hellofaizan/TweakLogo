@@ -48,11 +48,9 @@ const TablerIcons = TablerIconsImport as unknown as Record<
   React.ComponentType<any>
 >;
 
-// Get all Lucide icon names from lucide-static
 const ALL_ICON_NAMES = Object.keys(iconNodesJson);
 const iconNodes = iconNodesJson as Record<string, any>;
 
-// Presets for solid colors
 const solidPresets = [
   "#080166",
   "#0974f1",
@@ -81,7 +79,6 @@ function renderLucideSvg(
   size: number = 32,
   color: string = "currentColor"
 ) {
-  // iconNode is an array of [tag, attrs]
   return (
     <svg
       width={size}
@@ -95,14 +92,12 @@ function renderLucideSvg(
       style={{ display: "block" }}
     >
       {iconNode.map(([tag, attrs]: [string, any], i: number) =>
-        // eslint-disable-next-line react/jsx-key
         React.createElement(tag, { ...attrs, key: i })
       )}
     </svg>
   );
 }
 
-// Helper to convert a string to PascalCase
 function toPascalCase(str: string) {
   return str.replace(/(^|_|-)(\w)/g, (_, __, c) => (c ? c.toUpperCase() : ""));
 }
@@ -169,7 +164,6 @@ export function IconControls({
     [search]
   );
 
-  // Tabler icon names
   const tablerIconEntries = useMemo(
     () =>
       Object.keys(TablerIcons)
@@ -574,7 +568,7 @@ export function IconControls({
             <ColorPicker
               value={color}
               onChange={setColor}
-              width={333}
+              width={318}
               height={110}
               hideColorTypeBtns={true}
               hideInputType={true}
@@ -637,7 +631,7 @@ export function IconControls({
               value={fillColor}
               onChange={setFillColor}
               height={110}
-              width={333}
+              width={318}
               hideColorTypeBtns={true}
               hideInputs={true}
               hideOpacity={false}

@@ -240,6 +240,7 @@ export function TextLayer({
             />
           </div>
 
+          <div className="flex items-center justify-center gap-12">
           <div className="space-y-2">
             <label className="text-xs font-medium">Font Weight</label>
             <Select
@@ -276,6 +277,7 @@ export function TextLayer({
                 ))}
               </SelectContent>
             </Select>
+          </div>
           </div>
 
           <div className="space-y-2">

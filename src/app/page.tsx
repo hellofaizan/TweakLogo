@@ -18,6 +18,9 @@ import {
   Undo2,
   Type,
   Shuffle,
+  Share2,
+  RotateCcw,
+  RotateCw,
 } from "lucide-react";
 import {
   Select,
@@ -78,7 +81,10 @@ export default function Home() {
   const [format, setFormat] = useState("png");
   const [isDownloading, setIsDownloading] = useState(false);
 
-  // Randomizer arrays - only use icons that exist in both libraries
+  const [history, setHistory] = useState<any[]>([]);
+  const [historyIndex, setHistoryIndex] = useState(-1);
+  const [isUndoRedoAction, setIsUndoRedoAction] = useState(false);
+
   const randomIcons = ["Zap", "Heart", "Star", "Smile", "Coffee", "Music", "Camera", "Gift", "Leaf", "Rocket", "Diamond", "Crown", "Fire", "Moon", "Sun", "Cloud", "Tree", "Flower", "Car", "Plane", "Ship", "Bike", "Book", "Pen", "Phone", "Laptop", "Gamepad", "Headphones", "Microphone", "Speaker", "Lightbulb", "Settings", "Home", "User", "Mail", "Search", "Plus", "Minus", "Check", "X", "ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
   const randomColors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9", "#F8C471", "#82E0AA", "#F1948A", "#85C1E9", "#D7BDE2", "#F9E79F", "#A9DFBF", "#FAD7A0", "#D5A6BD", "#A3E4D7"];
   const randomGradients = [
@@ -195,35 +201,210 @@ export default function Home() {
   };
 
   const randomizeLogo = () => {
-    // Random icon
     const randomIcon = randomIcons[Math.floor(Math.random() * randomIcons.length)];
     
-    // Random icon library
     const randomLibrary = Math.random() > 0.5 ? "lucide" : "tabler";
     setIconLibrary(randomLibrary);
     
-    // Set icon name based on library
     if (randomLibrary === "tabler") {
       setIconName("Icon" + randomIcon);
     } else {
       setIconName(randomIcon);
     }
     
-    // Random icon properties
-    setIconSize(Math.floor(Math.random() * 300) + 200); // 200-500px
-    setIconRotate(Math.floor(Math.random() * 360) - 180); // -180 to 180 degrees
-    setIconBorderWidth(Math.random() * 3 + 1); // 1-4px
+    setIconSize(Math.floor(Math.random() * 300) + 200);
+    setIconRotate(Math.floor(Math.random() * 360) - 180);
+    setIconBorderWidth(Math.random() * 3 + 1);
     setIconColor(randomColors[Math.floor(Math.random() * randomColors.length)]);
     setFillColor(randomColors[Math.floor(Math.random() * randomColors.length)]);
-    setFillOpacity(Math.random() * 0.8 + 0.2); // 0.2-1.0
+    setFillOpacity(Math.random() * 0.8 + 0.2);
     
-    // Random background properties
-    setBgRounded(Math.floor(Math.random() * 200) + 50); // 50-250px
-    setBgPadding(Math.floor(Math.random() * 60) + 10); // 10-70px
-    setBgShadow(Math.floor(Math.random() * 4) + 1); // 1-4 shadow levels
+    setBgRounded(Math.floor(Math.random() * 200) + 50);
+    setBgPadding(Math.floor(Math.random() * 60) + 10);
+    setBgShadow(Math.floor(Math.random() * 4) + 1);
     setBgColor(randomGradients[Math.floor(Math.random() * randomGradients.length)]);
     
     toast.success("🎲 Logo randomized!");
+  };
+
+  const saveToHistory = (newState: any) => {
+    if (isUndoRedoAction) return;
+    
+    const currentState = {
+      iconName,
+      iconLibrary,
+      iconSize,
+      iconRotate,
+      iconBorderWidth,
+      iconColor,
+      fillColor,
+      fillOpacity,
+      bgRounded,
+      bgPadding,
+      bgShadow,
+      bgColor,
+      textLayers,
+      timestamp: Date.now(),
+    };
+
+    const newHistory = history.slice(0, historyIndex + 1);
+    newHistory.push(currentState);
+    
+    if (newHistory.length > 20) {
+      newHistory.shift();
+    }
+    
+    setHistory(newHistory);
+    setHistoryIndex(newHistory.length - 1);
+  };
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      setIsUndoRedoAction(true);
+      const prevState = history[historyIndex - 1];
+      
+      setIconName(prevState.iconName);
+      setIconLibrary(prevState.iconLibrary);
+      setIconSize(prevState.iconSize);
+      setIconRotate(prevState.iconRotate);
+      setIconBorderWidth(prevState.iconBorderWidth);
+      setIconColor(prevState.iconColor);
+      setFillColor(prevState.fillColor);
+      setFillOpacity(prevState.fillOpacity);
+      setBgRounded(prevState.bgRounded);
+      setBgPadding(prevState.bgPadding);
+      setBgShadow(prevState.bgShadow);
+      setBgColor(prevState.bgColor);
+      setTextLayers(prevState.textLayers);
+      
+      setHistoryIndex(historyIndex - 1);
+      toast.success("↶ Undone");
+      
+      setTimeout(() => setIsUndoRedoAction(false), 100);
+    }
+  };
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      setIsUndoRedoAction(true);
+      const nextState = history[historyIndex + 1];
+      
+      setIconName(nextState.iconName);
+      setIconLibrary(nextState.iconLibrary);
+      setIconSize(nextState.iconSize);
+      setIconRotate(nextState.iconRotate);
+      setIconBorderWidth(nextState.iconBorderWidth);
+      setIconColor(nextState.iconColor);
+      setFillColor(nextState.fillColor);
+      setFillOpacity(nextState.fillOpacity);
+      setBgRounded(nextState.bgRounded);
+      setBgPadding(nextState.bgPadding);
+      setBgShadow(nextState.bgShadow);
+      setBgColor(nextState.bgColor);
+      setTextLayers(nextState.textLayers);
+      
+      setHistoryIndex(historyIndex + 1);
+      toast.success("↷ Redone");
+      
+      setTimeout(() => setIsUndoRedoAction(false), 100);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === 'z' && !e.shiftKey) {
+          e.preventDefault();
+          undo();
+        } else if ((e.key === 'y') || (e.key === 'z' && e.shiftKey)) {
+          e.preventDefault();
+          redo();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [historyIndex, history]);
+
+  useEffect(() => {
+    if (!isUndoRedoAction) {
+      saveToHistory({});
+    }
+  }, [iconName, iconLibrary, iconSize, iconRotate, iconBorderWidth, iconColor, fillColor, fillOpacity, bgRounded, bgPadding, bgShadow, bgColor, textLayers]);
+
+  const generateShareUrl = () => {
+    const logoData = {
+      iconName,
+      iconLibrary,
+      iconSize,
+      iconRotate,
+      iconBorderWidth,
+      iconColor,
+      fillColor,
+      fillOpacity,
+      bgRounded,
+      bgPadding,
+      bgShadow,
+      bgColor,
+      textLayers,
+    };
+    
+    const encoded = btoa(JSON.stringify(logoData));
+    return `${window.location.origin}${window.location.pathname}?logo=${encoded}`;
+  };
+
+  const loadFromUrl = () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const logoParam = urlParams.get('logo');
+    
+    if (logoParam) {
+      try {
+        const logoData = JSON.parse(atob(logoParam));
+        
+        setIconName(logoData.iconName);
+        setIconLibrary(logoData.iconLibrary);
+        setIconSize(logoData.iconSize);
+        setIconRotate(logoData.iconRotate);
+        setIconBorderWidth(logoData.iconBorderWidth);
+        setIconColor(logoData.iconColor);
+        setFillColor(logoData.fillColor);
+        setFillOpacity(logoData.fillOpacity);
+        setBgRounded(logoData.bgRounded);
+        setBgPadding(logoData.bgPadding);
+        setBgShadow(logoData.bgShadow);
+        setBgColor(logoData.bgColor);
+        setTextLayers(logoData.textLayers || []);
+        
+        toast.success("🎨 Logo loaded from URL!");
+      } catch (error) {
+        console.error('Failed to load logo from URL:', error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    loadFromUrl();
+  }, []);
+
+  const shareLogo = async () => {
+    const shareUrl = generateShareUrl();
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Check out this logo I made!',
+          text: 'I created this logo using LogoTweak',
+          url: shareUrl,
+        });
+      } catch (error) {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("🔗 Share link copied to clipboard!");
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success("🔗 Share link copied to clipboard!");
+    }
   };
 
   useEffect(() => {
@@ -243,10 +424,47 @@ export default function Home() {
         </div>
         
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" className="gap-2">
-            <Undo2 className="w-4 h-4" />
-            Undo
-          </Button>
+          <div className="flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={undo}
+                    disabled={historyIndex <= 0}
+                    className="gap-2"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Undo
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                  <p className="text-xs">Undo (Ctrl+Z)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={redo}
+                    disabled={historyIndex >= history.length - 1}
+                    className="gap-2"
+                  >
+                    <RotateCw className="w-4 h-4" />
+                    Redo
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                  <p className="text-xs">Redo (Ctrl+Y)</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">Presets:</span>
@@ -280,6 +498,25 @@ export default function Home() {
               </TooltipTrigger>
               <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
                 <p className="text-xs">Generate a random logo design</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={shareLogo}
+                  className="gap-2"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                <p className="text-xs">Share logo via URL</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -328,67 +565,6 @@ export default function Home() {
             </button>
           </nav>
         </aside>
-
-        <main className="w-96 border-r border-border bg-card p-6 overflow-y-auto">
-          {activeTab === "icon" ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
-                  {Icon && <Icon size={20} />}
-                </div>
-                <span className="font-medium">{iconName}</span>
-              </div>
-              
-              <IconControls
-                iconName={iconName}
-                setIconName={setIconName}
-                iconLibrary={iconLibrary}
-                setIconLibrary={setIconLibrary}
-                size={iconSize}
-                setSize={setIconSize}
-                rotate={iconRotate}
-                setRotate={setIconRotate}
-                borderWidth={iconBorderWidth}
-                setBorderWidth={setIconBorderWidth}
-                color={iconColor}
-                setColor={setIconColor}
-                fillColor={fillColor}
-                setFillColor={setFillColor}
-                fillOpacity={fillOpacity}
-                setFillOpacity={setFillOpacity}
-                setBgColor={setBgColor}
-                setBgPadding={setBgPadding}
-                setBgRounded={setBgRounded}
-                setBgShadow={setBgShadow}
-              />
-            </div>
-          ) : activeTab === "background" ? (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mb-6">Background Settings</h3>
-              <BackgroundControls
-                rounded={bgRounded}
-                setRounded={setBgRounded}
-                padding={bgPadding}
-                setPadding={setBgPadding}
-                shadow={bgShadow}
-                setShadow={setBgShadow}
-                bgColor={bgColor}
-                setBgColor={setBgColor}
-              />
-            </div>
-          ) : (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mb-6">Text Settings</h3>
-              <TextLayer
-                textLayers={textLayers}
-                setTextLayers={setTextLayers}
-                selectedTextId={selectedTextId}
-                setSelectedTextId={setSelectedTextId}
-                canvasSize={600}
-              />
-            </div>
-          )}
-        </main>
 
         <div className="flex-1 flex flex-col">
           <div className="flex-1 flex items-center justify-center p-8 bg-muted/20">
@@ -510,6 +686,68 @@ export default function Home() {
             </div>
           </div>
         </div>
+
+        <main className="w-96 h-[95vh] border-l border-border bg-card p-6 overflow-scroll">
+          {activeTab === "icon" ? (
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
+                  {Icon && <Icon size={20} />}
+                </div>
+                <span className="font-medium">{iconName}</span>
+              </div>
+              
+              <IconControls
+                iconName={iconName}
+                setIconName={setIconName}
+                iconLibrary={iconLibrary}
+                setIconLibrary={setIconLibrary}
+                size={iconSize}
+                setSize={setIconSize}
+                rotate={iconRotate}
+                setRotate={setIconRotate}
+                borderWidth={iconBorderWidth}
+                setBorderWidth={setIconBorderWidth}
+                color={iconColor}
+                setColor={setIconColor}
+                fillColor={fillColor}
+                setFillColor={setFillColor}
+                fillOpacity={fillOpacity}
+                setFillOpacity={setFillOpacity}
+                setBgColor={setBgColor}
+                setBgPadding={setBgPadding}
+                setBgRounded={setBgRounded}
+                setBgShadow={setBgShadow}
+              />
+            </div>
+          ) : activeTab === "background" ? (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold mb-6">Background Settings</h3>
+              <BackgroundControls
+                rounded={bgRounded}
+                setRounded={setBgRounded}
+                padding={bgPadding}
+                setPadding={setBgPadding}
+                shadow={bgShadow}
+                setShadow={setBgShadow}
+                bgColor={bgColor}
+                setBgColor={setBgColor}
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold mb-6">Text Settings</h3>
+              <TextLayer
+                textLayers={textLayers}
+                setTextLayers={setTextLayers}
+                selectedTextId={selectedTextId}
+                setSelectedTextId={setSelectedTextId}
+                canvasSize={600}
+              />
+            </div>
+          )}
+        </main>
+
       </div>
 
 

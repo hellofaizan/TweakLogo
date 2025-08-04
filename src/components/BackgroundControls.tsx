@@ -26,11 +26,9 @@ export function BackgroundControls({
   bgColor: string;
   setBgColor: (v: string) => void;
 }) {
-  // Add state to track color mode
   const [colorMode, setColorMode] = useState("gradient");
   const pickerRef = useRef(null);
 
-  // Effect to detect mode change by observing the color value
   useEffect(() => {
     if (typeof bgColor === "string" && bgColor.startsWith("linear-gradient")) {
       setColorMode("gradient");
@@ -39,7 +37,6 @@ export function BackgroundControls({
     }
   }, [bgColor]);
 
-  // Presets
   const solidPresets = [
     "#080166",
     "#0974f1",
@@ -181,7 +178,7 @@ export function BackgroundControls({
             value={bgColor}
             onChange={setBgColor}
             height={120}
-            width={333}
+            width={318}
             hidePresets={true}
             className="rounded-lg p-2 custom-gradient-picker"
           />

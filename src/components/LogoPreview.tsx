@@ -54,7 +54,6 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   ];
   const shadowClass = shadowMap[bgShadow] || "shadow-md";
 
-  // Canvas size
   const CANVAS_SIZE = 600;
   const bgSize = CANVAS_SIZE - 2 * bgPadding;
 
