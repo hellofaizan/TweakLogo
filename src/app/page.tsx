@@ -189,7 +189,7 @@ export default function Home() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Zap className="w-6 h-6 text-primary" />
-            <span className="font-bold text-xl">LogoFast</span>
+            <span className="font-bold text-xl">Logo Tweak</span>
           </div>
         </div>
         
