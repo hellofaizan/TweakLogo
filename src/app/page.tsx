@@ -407,6 +407,23 @@ export default function Home() {
     }
   };
 
+  // Responsive canvas size hook
+  const [canvasSize, setCanvasSize] = useState(600);
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      const width = window.innerWidth;
+      if (width < 640) setCanvasSize(300);
+      else if (width < 768) setCanvasSize(400);
+      else if (width < 1024) setCanvasSize(500);
+      else setCanvasSize(600);
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
+
   useEffect(() => {
     if (selectedTextId) {
       setActiveTab("text");
@@ -415,16 +432,16 @@ export default function Home() {
 
   return (
     <div className="h-screen flex flex-col bg-background">
-      <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
+      <header className="h-16 border-b border-border bg-card flex items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
-            <LucideIconsImport.MousePointer2 className="w-6 h-6 text-primary" />
-            <span className="font-bold text-xl">Logo Tweak</span>
+            <LucideIconsImport.MousePointer2 className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+            <span className="font-bold text-lg md:text-xl">Logo Tweak</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="hidden md:flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -466,67 +483,70 @@ export default function Home() {
             </TooltipProvider>
           </div>
           
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-medium">Presets:</span>
-            <div className="flex gap-2">
-              {presets.map((preset) => (
+          <div className="flex items-center gap-1 md:gap-2">
+            <span className="text-xs md:text-sm font-medium hidden sm:block">Presets:</span>
+            <div className="flex gap-1 md:gap-2">
+              {presets.slice(0, 3).map((preset) => (
                 <button
                   key={preset.id}
                   onClick={() => applyPreset(preset)}
-                  className="w-8 h-8 rounded border-2 border-border hover:border-primary transition-colors flex items-center justify-center"
+                  className="w-6 h-6 md:w-8 md:h-8 rounded border-2 border-border hover:border-primary transition-colors flex items-center justify-center"
                   style={{ backgroundColor: preset.bgColor }}
                   title={preset.name}
                 >
-                  <Zap className="w-4 h-4" style={{ color: preset.iconColor }} />
+                  <Zap className="w-3 h-3 md:w-4 md:h-4" style={{ color: preset.iconColor }} />
                 </button>
               ))}
             </div>
           </div>
           
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={randomizeLogo}
-                  className="gap-2"
-                >
-                  <Shuffle className="w-4 h-4" />
-                  Random
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
-                <p className="text-xs">Generate a random logo design</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={shareLogo}
-                  className="gap-2"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
-                <p className="text-xs">Share logo via URL</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <div className="flex items-center gap-1 md:gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={randomizeLogo}
+                    className="gap-1 md:gap-2 px-2 md:px-3"
+                  >
+                    <Shuffle className="w-3 h-3 md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">Random</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                  <p className="text-xs">Generate a random logo design</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={shareLogo}
+                    className="gap-1 md:gap-2 px-2 md:px-3"
+                  >
+                    <Share2 className="w-3 h-3 md:w-4 md:h-4" />
+                    <span className="hidden sm:inline">Share</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                  <p className="text-xs">Share logo via URL</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           
           <ModeToggle />
         </div>
       </header>
 
-      <div className="flex-1 flex">
-        <aside className="w-64 border-r border-border bg-card p-4">
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Sidebar - Hidden on mobile, shown on desktop */}
+        <aside className="hidden lg:block w-64 border-r border-border bg-card p-4">
           <nav className="space-y-2">
             <button
               onClick={() => setActiveTab("icon")}
@@ -566,9 +586,51 @@ export default function Home() {
           </nav>
         </aside>
 
+        {/* Mobile Tab Navigation */}
+        <div className="lg:hidden border-b border-border bg-card">
+          <div className="flex">
+            <button
+              onClick={() => setActiveTab("icon")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === "icon"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Zap className="w-4 h-4" />
+              <span>Icon</span>
+            </button>
+            
+            <button
+              onClick={() => setActiveTab("background")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === "background"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Palette className="w-4 h-4" />
+              <span>Background</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab("text")}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+                activeTab === "text"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`}
+            >
+              <Type className="w-4 h-4" />
+              <span>Text</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Preview Area */}
         <div className="flex-1 flex flex-col">
-          <div className="flex-1 flex items-center justify-center p-8 bg-muted/20">
-            <div className="relative">
+          <div className="flex-1 flex items-center justify-center p-4 md:p-8 bg-muted/20">
+            <div className="relative w-full max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl">
               <LogoPreview
                 ref={previewRef}
                 Icon={Icon}
@@ -594,107 +656,114 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="border-t border-border bg-card p-4">
-            <div className="flex items-center gap-4">
-              <Select value={resolution} onValueChange={setResolution}>
-                <SelectTrigger className="w-24">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="0.5x">0.5x</SelectItem>
-                  <SelectItem value="1x">1x</SelectItem>
-                  <SelectItem value="2x">2x</SelectItem>
-                  <SelectItem value="4x">4x</SelectItem>
-                  <SelectItem value="8x">8x</SelectItem>
-                  <SelectItem value="fullres">FullRes</SelectItem>
-                </SelectContent>
-              </Select>
+          {/* Export Controls */}
+          <div className="border-t border-border bg-card p-3 md:p-4">
+            <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4">
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Select value={resolution} onValueChange={setResolution}>
+                  <SelectTrigger className="w-20 md:w-24 text-xs md:text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="0.5x">0.5x</SelectItem>
+                    <SelectItem value="1x">1x</SelectItem>
+                    <SelectItem value="2x">2x</SelectItem>
+                    <SelectItem value="4x">4x</SelectItem>
+                    <SelectItem value="8x">8x</SelectItem>
+                    <SelectItem value="fullres">FullRes</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={format} onValueChange={setFormat}>
+                  <SelectTrigger className="w-16 md:w-20 text-xs md:text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="png">PNG</SelectItem>
+                    <SelectItem value="jpg">JPG</SelectItem>
+                    <SelectItem value="svg">SVG</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
-              <Select value={format} onValueChange={setFormat}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="png">PNG</SelectItem>
-                  <SelectItem value="jpg">JPG</SelectItem>
-                  <SelectItem value="svg">SVG</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      aria-label="Save inside browser"
-                      onClick={() => {
-                        const iconData = {
-                          id: Date.now(),
-                          iconName,
-                          iconLibrary,
-                          iconSize,
-                          iconRotate,
-                          iconBorderWidth,
-                          iconColor,
-                          fillColor,
-                          fillOpacity,
-                          bgRounded,
-                          bgPadding,
-                          bgShadow,
-                          bgColor,
-                          textLayers,
-                        };
-                        let saved = [];
-                        try {
-                          saved = JSON.parse(
-                            localStorage.getItem("logotweak-saved-icons") ||
-                              "[]"
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        aria-label="Save inside browser"
+                        onClick={() => {
+                          const iconData = {
+                            id: Date.now(),
+                            iconName,
+                            iconLibrary,
+                            iconSize,
+                            iconRotate,
+                            iconBorderWidth,
+                            iconColor,
+                            fillColor,
+                            fillOpacity,
+                            bgRounded,
+                            bgPadding,
+                            bgShadow,
+                            bgColor,
+                            textLayers,
+                          };
+                          let saved = [];
+                          try {
+                            saved = JSON.parse(
+                              localStorage.getItem("logotweak-saved-icons") ||
+                                "[]"
+                            );
+                          } catch {}
+                          saved.unshift(iconData);
+                          localStorage.setItem(
+                            "logotweak-saved-icons",
+                            JSON.stringify(saved)
                           );
-                        } catch {}
-                        saved.unshift(iconData);
-                        localStorage.setItem(
-                          "logotweak-saved-icons",
-                          JSON.stringify(saved)
-                        );
-                        toast.success(
-                          "The icon and the tweaks have been saved. You can find them inside icon library."
-                        );
-                      }}
-                    >
-                      <Save className="w-4 h-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
-                    Save the icon and the tweaks
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              
-              <Button
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="flex-1"
-              >
-                {isDownloading ? (
-                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
-                ) : (
-                  <Download className="mr-2 h-4 w-4" />
-                )}
-                Download Logo
-              </Button>
+                          toast.success(
+                            "The icon and the tweaks have been saved. You can find them inside icon library."
+                          );
+                        }}
+                      >
+                        <Save className="w-4 h-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="px-3 py-1 rounded-md bg-muted border">
+                      Save the icon and the tweaks
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <Button
+                  onClick={handleDownload}
+                  disabled={isDownloading}
+                  className="flex-1 sm:flex-none"
+                >
+                  {isDownloading ? (
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  ) : (
+                    <Download className="mr-2 h-4 w-4" />
+                  )}
+                  <span className="hidden sm:inline">Download Logo</span>
+                  <span className="sm:hidden">Download</span>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
 
-        <main className="w-96 h-[95vh] border-l border-border bg-card p-6 overflow-scroll">
+        {/* Control Panel - Responsive */}
+        <main className="w-full lg:w-96 border-t lg:border-l lg:border-t-0 border-border bg-card p-4 md:p-6 overflow-y-auto max-h-96 lg:max-h-none">
           {activeTab === "icon" ? (
-            <div className="space-y-6">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center">
-                  {Icon && <Icon size={20} />}
+            <div className="space-y-4 md:space-y-6">
+              <div className="flex items-center gap-3 mb-4 md:mb-6">
+                <div className="w-6 h-6 md:w-8 md:h-8 rounded bg-muted flex items-center justify-center">
+                  {Icon && <Icon size={16} className="md:w-5 md:h-5" />}
                 </div>
-                <span className="font-medium">{iconName}</span>
+                <span className="font-medium text-sm md:text-base">{iconName}</span>
               </div>
               
               <IconControls
@@ -721,8 +790,8 @@ export default function Home() {
               />
             </div>
           ) : activeTab === "background" ? (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mb-6">Background Settings</h3>
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-base md:text-lg font-semibold mb-4 md:mb-6">Background Settings</h3>
               <BackgroundControls
                 rounded={bgRounded}
                 setRounded={setBgRounded}
@@ -735,14 +804,14 @@ export default function Home() {
               />
             </div>
           ) : (
-            <div className="space-y-6">
-              <h3 className="text-lg font-semibold mb-6">Text Settings</h3>
+            <div className="space-y-4 md:space-y-6">
+              <h3 className="text-base md:text-lg font-semibold mb-4 md:mb-6">Text Settings</h3>
               <TextLayer
                 textLayers={textLayers}
                 setTextLayers={setTextLayers}
                 selectedTextId={selectedTextId}
                 setSelectedTextId={setSelectedTextId}
-                canvasSize={600}
+                canvasSize={canvasSize}
               />
             </div>
           )}

@@ -1,4 +1,4 @@
-import React, { useState, forwardRef } from "react";
+import React, { useState, forwardRef, useEffect } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -43,6 +43,7 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   const [hovered, setHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [canvasSize, setCanvasSize] = useState(600);
 
   const shadowMap = [
     "shadow-none",
@@ -54,30 +55,57 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   ];
   const shadowClass = shadowMap[bgShadow] || "shadow-md";
 
-  const CANVAS_SIZE = 600;
+  const getCanvasSize = () => {
+    if (typeof window !== 'undefined') {
+      const width = window.innerWidth;
+      if (width < 640) return 300; // sm
+      if (width < 768) return 400; // md
+      if (width < 1024) return 500; // lg
+      return 600; // xl and above
+    }
+    return 600; // default
+  };
+
+  useEffect(() => {
+    const updateCanvasSize = () => {
+      setCanvasSize(getCanvasSize());
+    };
+
+    updateCanvasSize();
+    window.addEventListener('resize', updateCanvasSize);
+    return () => window.removeEventListener('resize', updateCanvasSize);
+  }, []);
+
+  const CANVAS_SIZE = canvasSize;
   const bgSize = CANVAS_SIZE - 2 * bgPadding;
 
-  const handleTextMouseDown = (e: React.MouseEvent, layer: TextLayerData) => {
+  const handleTextMouseDown = (e: React.MouseEvent | React.TouchEvent, layer: TextLayerData) => {
     e.stopPropagation();
     setSelectedTextId(layer.id);
     
     const rect = (ref as any)?.current?.getBoundingClientRect();
     if (rect) {
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      
       setDragOffset({
-        x: e.clientX - rect.left - layer.x,
-        y: e.clientY - rect.top - layer.y
+        x: clientX - rect.left - layer.x,
+        y: clientY - rect.top - layer.y
       });
       setIsDragging(true);
     }
   };
 
-  const handleMouseMove = (e: React.MouseEvent) => {
+  const handleMouseMove = (e: React.MouseEvent | TouchEvent) => {
     if (!isDragging || !selectedTextId) return;
 
     const rect = (ref as any)?.current?.getBoundingClientRect();
     if (rect) {
-      const newX = e.clientX - rect.left - dragOffset.x;
-      const newY = e.clientY - rect.top - dragOffset.y;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      
+      const newX = clientX - rect.left - dragOffset.x;
+      const newY = clientY - rect.top - dragOffset.y;
 
       updateTextLayer(selectedTextId, {
         x: Math.max(0, Math.min(bgSize - 100, newX)),
@@ -93,10 +121,14 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
   React.useEffect(() => {
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove as any);
+      document.addEventListener('touchmove', handleMouseMove as any, { passive: false });
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchend', handleMouseUp);
       return () => {
         document.removeEventListener('mousemove', handleMouseMove as any);
+        document.removeEventListener('touchmove', handleMouseMove as any);
         document.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('touchend', handleMouseUp);
       };
     }
   }, [isDragging, selectedTextId, dragOffset, updateTextLayer]);
@@ -112,14 +144,13 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
       <Tooltip>
         <TooltipTrigger>
           <div
-            className={`relative flex items-center justify-center overflow-hidden rounded-lg border border-border bg-background`}
+            className={`relative flex items-center justify-center overflow-hidden rounded-lg border border-border bg-background w-full max-w-full`}
             style={{
               width: CANVAS_SIZE,
               height: CANVAS_SIZE,
-              minWidth: CANVAS_SIZE,
-              minHeight: CANVAS_SIZE,
-              maxWidth: CANVAS_SIZE,
-              maxHeight: CANVAS_SIZE,
+              maxWidth: '100%',
+              maxHeight: '100%',
+              aspectRatio: '1 / 1',
               backgroundImage: `
                 linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px)
@@ -174,6 +205,7 @@ export const LogoPreview = forwardRef<HTMLDivElement, {
                     whiteSpace: 'nowrap',
                   }}
                   onMouseDown={(e) => handleTextMouseDown(e, layer)}
+                  onTouchStart={(e) => handleTextMouseDown(e, layer)}
                 >
                   {layer.text}
                 </div>
