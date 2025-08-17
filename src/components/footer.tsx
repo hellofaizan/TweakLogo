@@ -22,14 +22,14 @@ export default function Footer() {
         </p>
         <div className="flex gap-2 w-full items-center justify-center mb-8 mt-2">
           <Link
-            href="https://x.com/mofaizandev"
+            href="https://x.com/curiousfaizaan"
             target="_blank"
             className="text-white"
           >
             <IconBrandTwitter size={28} />
           </Link>
           <Link
-            href="https://github.com/mofaizandev"
+            href="https://github.com/hellofaizan"
             target="_blank"
             className="text-white"
           >

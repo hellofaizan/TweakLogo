@@ -31,7 +31,7 @@ export default function AboutPage() {
             <div className="flex gap-3 mt-2">
               <a href="https://github.com/hellofaizan" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 dark:text-blue-400">GitHub</a>
               <a href="https://www.linkedin.com/in/hellofaizaan/" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 dark:text-blue-400">LinkedIn</a>
-              <a href="https://x.com/mofaizandev" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 dark:text-blue-400">Twitter</a>
+              <a href="https://x.com/curiousfaizaan" target="_blank" rel="noopener noreferrer" className="underline text-blue-600 dark:text-blue-400">Twitter</a>
               <a href="mailto:faizan@mohammadfaizan.in" className="underline text-blue-600 dark:text-blue-400">Email</a>
             </div>
           </div>

@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     description:
       "Create stunning logos online with LogoTweak - the fastest free logo generator. Design professional logos with thousands of icons, custom colors, and instant downloads.",
     images: ["/banner.png"],
-    creator: "@mofaizandev",
+    creator: "@curiousfaizaan",
   },
   robots: {
     index: true,

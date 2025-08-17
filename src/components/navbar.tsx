@@ -15,8 +15,8 @@ export default function Navbar() {
         <Link href="/features" className="hover:text-primary transition-colors">Features</Link>
         <Link href="/templates" className="hover:text-primary transition-colors">Templates</Link>
 
-        <Link href="https://github.com/mohammadfaizan/logotweak" className="hover:text-primary transition-colors"><IconBrandGithub /></Link>
-        <Link href="https://x.com/mofaizandev" className="hover:text-primary transition-colors"><IconBrandTwitter /></Link>
+        <Link href="https://github.com/hellofaizan/tweaklofo" className="hover:text-primary transition-colors"><IconBrandGithub /></Link>
+        <Link href="https://x.com/curiousfaizaan" className="hover:text-primary transition-colors"><IconBrandTwitter /></Link>
       </div>
     </nav>
   );
