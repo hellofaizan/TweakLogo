@@ -25,7 +25,7 @@
     "html-to-image": "^1.11.13",
     "lucide-react": "^0.522.0",
     "lucide-static": "^0.523.0",
-    "next": "15.3.4",
+    "next": "15.3.8",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-best-gradient-color-picker": "^3.0.14",
